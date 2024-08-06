@@ -25,3 +25,9 @@ export class DrawioEditorComponent implements AfterViewInit {
     // Logic to interact with the iframe and save the diagram
   }
 }
+
+
+
+<!-- drawio-editor.component.html -->
+<div id="drawio-container" style="width: 100%; height: 80vh;"></div>
+<button (click)="saveDiagram()">Save</button>
