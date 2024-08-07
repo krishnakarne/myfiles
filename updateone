@@ -1,0 +1,54 @@
+<div class="example-container" *ngIf="mobileQuery.matches">
+    <mat-toolbar class="example-toolbar">
+        <button mat-icon-button (click)="snav.toggle()"><svg [cIcon]="icons.cliMenu" size="xl"></svg></button>
+        <h1 class="example-app-name">DevSecOps Control Center</h1>
+    </mat-toolbar>
+</div>
+<mat-sidenav-container class="example-sidenav-container" [hasBackdrop]="false">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [(opened)]="isExpanded" [fixedInViewport]="mobileQuery.matches"
+        [fixedTopGap]="56">
+        <mat-nav-list>
+            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
+                <svg [cIcon]="icons.cliHome" size="xs" title="List Icon"></svg>
+            </div>
+            <a mat-list-item routerLink="/home" routerLinkActive="active" (click)="closeSidenav()">Home</a>
+
+            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
+                <svg [cIcon]="icons.cliLayers" size="xs" title="List Icon"></svg>
+            </div>
+            <a mat-list-item routerLink="/repositories" routerLinkActive="active" (click)="closeSidenav()">Repositories</a>
+
+            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
+                <svg [cIcon]="icons.cliPeople" size="xs" title="List Icon"></svg>
+            </div>
+            <a mat-list-item routerLink="/copilot" routerLinkActive="active" (click)="closeSidenav()">Copilot</a>
+
+            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
+                <svg [cIcon]="icons.cliUser" size="xs" title="List Icon"></svg>
+            </div>
+            <a mat-list-item routerLink="/intake" routerLinkActive="active" (click)="closeSidenav()">Gluon Intake Process</a>
+
+            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
+                <svg [cIcon]="icons.cliMenu" size="xs" title="List Icon"></svg>
+            </div>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        DevOps
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-nav-list>
+                    <a mat-list-item routerLink="/devops" routerLinkActive="active" (click)="closeSidenav()">DevOps Overview</a>
+                    <a mat-list-item routerLink="/devops/repositories" routerLinkActive="active" (click)="closeSidenav()">DevOps Repositories</a>
+                    <a mat-list-item routerLink="/draw.io" routerLinkActive="active">Draw.io</a>
+                </mat-nav-list>
+            </mat-expansion-panel>
+
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div class="example-sidenav-content">
+            <router-outlet></router-outlet>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
