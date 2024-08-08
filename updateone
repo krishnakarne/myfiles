@@ -1,3 +1,28 @@
+applySearch(): any[] {
+  if (this.searchBarValue !== "") {
+    const searchTerm = this.searchBarValue.toLowerCase();
+    return this.teamData.filter(e => {
+      return Object.entries(e).some(([key, val]) => {
+        if (val !== null && val !== undefined) {
+          if (Array.isArray(val)) {
+            // If the value is an array, check if any of the array items include the search term
+            return val.some(innerVal => innerVal.toString().toLowerCase().includes(searchTerm));
+          } else {
+            // Check if the stringified value includes the search term
+            return val.toString().toLowerCase().includes(searchTerm);
+          }
+        }
+        return false;
+      });
+    });
+  } else {
+    return this.teamData;
+  }
+}
+
+
+
+
 <div class="example-container" *ngIf="mobileQuery.matches">
     <mat-toolbar class="example-toolbar">
         <button mat-icon-button (click)="snav.toggle()"><svg [cIcon]="icons.cliMenu" size="xl"></svg></button>
