@@ -1,3 +1,25 @@
+onSearchText(event: Event) {
+  const input = (event.target as HTMLInputElement);
+  if (event.type !== 'keyup') return;
+
+  this.searchBarValue = input.value.toLowerCase() || "";
+  this.filteredTableData = this.searchBarValue.length === 0 
+    ? this.branchSource.filteredData 
+    : this.applySearch();
+}
+
+applySearch() {
+  return this.branchSource.filteredData.filter((data: any) => {
+    return Object.values(data).some(val => 
+      val !== null && val.toString().toLowerCase().includes(this.searchBarValue)
+    );
+  });
+}
+
+
+
+
+
 // drawio-editor.component.ts
 import { Component, AfterViewInit } from '@angular/core';
 
