@@ -1,22 +1,28 @@
 onSearchText(event: Event) {
-  const input = (event.target as HTMLInputElement);
-  if (event.type !== 'keyup') return;
+  const searchTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
 
-  this.searchBarValue = input.value.toLowerCase() || "";
-  this.filteredTableData = this.searchBarValue.length === 0 
-    ? this.branchSource.filteredData 
-    : this.applySearch();
-}
+  if (!searchTerm) {
+    // If search term is empty, reset the filtered data to original data
+    this.filteredTableData = [...this.branchSource.filteredData];
+    return;
+  }
 
-applySearch() {
-  return this.branchSource.filteredData.filter((data: any) => {
-    return Object.values(data).some(val => 
-      val !== null && val.toString().toLowerCase().includes(this.searchBarValue)
-    );
+  this.filteredTableData = this.branchSource.filteredData.filter((item: any) => {
+    return this.searchInObject(item, searchTerm);
   });
 }
 
-
+searchInObject(obj: any, searchTerm: string): boolean {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
+      const value = obj[key].toString().toLowerCase();
+      if (value.includes(searchTerm)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 
 
