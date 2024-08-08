@@ -51,103 +51,48 @@
             <router-outlet></router-outlet>
 
 ------------------------------------------------------------------------------------------------------------------------
-.example-container {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
 }
 
-.example-toolbar {
-    position: fixed;
-    z-index: 2;
-    background: #fff;
-    border-bottom: 1px solid #ccc;
+.card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+softglow
+
+
+
+---------------------------
+.card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
 }
 
-.example-app-name {
-    margin-left: 8px;
+.card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
+}
+-
+sutt
+
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
 }
 
-.example-sidenav-container {
-    display: flex;
-    flex: 1;
-    margin-top: 56px; /* Adjusted to match toolbar height */
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.example-sidenav-content {
-    flex: 1;
-    padding: 20px;
-}
-
-.mat-drawer-inner-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.mat-nav-list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.side-nav-icon {
-    display: flex;
-    align-items: center;
-    padding: 9px 15px;
-    cursor: pointer;
-}
-
-.side-nav-icon:hover {
-    background-color: #fe0000;
-    border-radius: 5px;
-    color: white;
-    opacity: 0.75;
-}
-
-.side-nav-icon svg {
-    margin-right: 8px;
-    fill: white; /* Make sure the icon color changes on hover */
-}
-
-.mat-list-item {
-    display: flex;
-    align-items: center;
-}
-
-.mat-list-item:hover {
-    background-color: #fe0000;
-    color: white;
-}
-
-.mat-expansion-panel-header {
-    background-color: #f5f5f5;
-}
-
-.mat-expansion-panel-header:hover {
-    background-color: #fe0000;
-    color: white;
-}
-
-.mat-expansion-panel-header .mat-panel-title {
-    font-weight: bold;
-    color: black;
-}
-
-.mat-expansion-panel-content {
-    background-color: #fff;
-    color: black;
-}
-
-/* Additional styling for better appearance */
-.mat-list-item.mat-list-item-active {
-    background-color: #fe0000;
-    color: white;
-}
 
         </div>
     </mat-sidenav-content>
