@@ -1,3 +1,27 @@
+onSearchText(event: Event) {
+  const input = (event.target as HTMLInputElement).value.toLowerCase();
+
+  if (!input || input.trim() === '') {
+    // If the search input is empty, reset the filtered data
+    this.filteredTableData = [...this.branchSource.filteredData];
+  } else {
+    // Filter the data based on the search input
+    this.filteredTableData = this.branchSource.filteredData.filter((data: any) => {
+      return this.objectValuesToString(data).includes(input);
+    });
+  }
+}
+
+objectValuesToString(data: any): string {
+  return Object.values(data)
+    .filter(val => val !== null && val !== undefined) // Filter out null or undefined values
+    .map(val => val.toString().toLowerCase()) // Convert to string and lowercase
+    .join(' '); // Join all values into a single string
+}
+
+
+
+
 applySearch(): any[] {
   if (this.searchBarValue !== "") {
     const searchTerm = this.searchBarValue.toLowerCase();
