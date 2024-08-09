@@ -9,41 +9,66 @@
   color: white !important; /* Custom selected text color */
 }
 
-onSearchText(event: Event) {
-  const input = (event.target as HTMLInputElement);
-  this.searchBarValue = input.value || ''; // Capture the current value of the search bar
-  this.applySearch(); // Apply the search filter or reset the data
-}
-applySearch() {
-  const searchValue = this.searchBarValue.toLowerCase().trim();
+export class TeamsTableDataComponent implements OnInit {
+  branchSource = new MatTableDataSource<any>([]); // Initialize with an empty array or with your data
+  filteredTableData: any[] = []; // Holds filtered data
+  searchBarValue: string = ''; // For the search input binding
 
-  if (!searchValue) {
-    // Reset the filtered data to the full original dataset
-    this.filteredtabledata = [...this.branchSource.filteredData];
-  } else {
-    // Filter the data by 'name' field
-    this.filteredtabledata = this.branchSource.filteredData.filter((item: any) => {
-      return item.name && item.name.toLowerCase().includes(searchValue);
-    });
+  ngOnInit(): void {
+    // Fetch and set your data to branchSource and filteredTableData here
+    this.loadData();
   }
 
-  // Update the table data source to reflect the filtered data
-  this.branchSource = new MatTableDataSource<any>(this.filteredtabledata);
-}
-
-
-applySearch() {
-  if (!this.searchBarValue || this.searchBarValue.trim() === '') {
-    this.filteredtabledata = [...this.branchSource.filteredData]; // Reset to full data if search bar is empty
-  } else {
-    const searchValue = this.searchBarValue.toLowerCase().trim();
-    this.filteredtabledata = this.branchSource.filteredData.filter((item: any) => {
-      return item.name && item.name.toLowerCase().includes(searchValue);
-    });
+  loadData(): void {
+    // Assuming you fetch data and assign it to branchSource and filteredTableData
+    // For example:
+    const responseData = /* Your fetched data here */;
+    this.branchSource.data = responseData;
+    this.filteredTableData = responseData;
   }
-  
-  this.branchSource = new MatTableDataSource<any>(this.filteredtabledata); // Update the data source
+
+  onSearchText(event: Event): void {
+    const input = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchBarValue = input || ''; // Capture the current value of the search bar
+
+    if (this.searchBarValue.length === 0) {
+      this.resetData(); // Reset to the full original dataset
+    } else {
+      this.applySearch();
+    }
+  }
+
+  applySearch(): void {
+    const searchValue = this.searchBarValue.trim().toLowerCase();
+
+    if (searchValue) {
+      this.filteredTableData = this.branchSource.data.filter((item: any) => {
+        // Adjust the condition below based on the fields you want to search by
+        return (
+          (item.name && item.name.toLowerCase().includes(searchValue)) ||
+          (item.id && item.id.toString().includes(searchValue)) ||
+          (item.node_id && item.node_id.toLowerCase().includes(searchValue)) ||
+          (item.description && item.description.toLowerCase().includes(searchValue))
+        );
+      });
+
+      this.branchSource = new MatTableDataSource<any>(this.filteredTableData); // Update the data source to reflect the filtered data
+    } else {
+      this.resetData(); // Reset to the full original dataset
+    }
+  }
+
+  resetData(): void {
+    this.filteredTableData = this.branchSource.data; // Reset the filtered data to the original dataset
+    this.branchSource = new MatTableDataSource<any>(this.filteredTableData); // Update the data source
+  }
+
+  clearSearch(): void {
+    this.searchBarValue = ''; // Clear the search input
+    this.resetData(); // Reset the data
+  }
 }
+
 
 
 // drawio-editor.component.ts
