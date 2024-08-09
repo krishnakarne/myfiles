@@ -1,23 +1,12 @@
-::ng-deep .mat-paginator .mat-select-panel .mat-option:hover {
-  background-color: #FF5733 !important; /* Example custom hover color */
-  color: white !important; /* Example text color */
+::ng-deep .mat-mdc-option:hover,
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+  background-color: #FF5733 !important; /* Custom hover and active background color */
+  color: white !important; /* Custom hover and active text color */
 }
 
-::ng-deep .mat-paginator .mat-select-panel .mat-option.mat-active {
-  background-color: #FF5733 !important; /* Active state background color */
-  color: white !important; /* Active state text color */
-}
-
-
-
-.mat-paginator .mat-select-panel .mat-option:hover {
-  background-color: #FF5733 !important; /* Example custom hover color */
-  color: white !important; /* Example text color */
-}
-
-.mat-paginator .mat-select-panel .mat-option.mat-active {
-  background-color: #FF5733 !important; /* Active state background color */
-  color: white !important; /* Active state text color */
+::ng-deep .mat-mdc-option.mat-mdc-option-selected:not(.mat-mdc-option-disabled) {
+  background-color: #FF5733 !important; /* Custom selected background color */
+  color: white !important; /* Custom selected text color */
 }
 
 
