@@ -1,3 +1,15 @@
+::ng-deep .mat-paginator .mat-select-panel .mat-option:hover {
+  background-color: #FF5733 !important; /* Example custom hover color */
+  color: white !important; /* Example text color */
+}
+
+::ng-deep .mat-paginator .mat-select-panel .mat-option.mat-active {
+  background-color: #FF5733 !important; /* Active state background color */
+  color: white !important; /* Active state text color */
+}
+
+
+
 .mat-paginator .mat-select-panel .mat-option:hover {
   background-color: #FF5733 !important; /* Example custom hover color */
   color: white !important; /* Example text color */
