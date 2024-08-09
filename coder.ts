@@ -9,6 +9,29 @@
   color: white !important; /* Custom selected text color */
 }
 
+onSearchText(event: Event) {
+  const input = (event.target as HTMLInputElement);
+  this.searchBarValue = input.value || ''; // Capture the current value of the search bar
+  this.applySearch(); // Apply the search filter or reset the data
+}
+applySearch() {
+  const searchValue = this.searchBarValue.toLowerCase().trim();
+
+  if (!searchValue) {
+    // Reset the filtered data to the full original dataset
+    this.filteredtabledata = [...this.branchSource.filteredData];
+  } else {
+    // Filter the data by 'name' field
+    this.filteredtabledata = this.branchSource.filteredData.filter((item: any) => {
+      return item.name && item.name.toLowerCase().includes(searchValue);
+    });
+  }
+
+  // Update the table data source to reflect the filtered data
+  this.branchSource = new MatTableDataSource<any>(this.filteredtabledata);
+}
+
+
 applySearch() {
   if (!this.searchBarValue || this.searchBarValue.trim() === '') {
     this.filteredtabledata = [...this.branchSource.filteredData]; // Reset to full data if search bar is empty
