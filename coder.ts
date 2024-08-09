@@ -71,36 +71,66 @@ export class TeamsTableDataComponent implements OnInit {
 
 
 
-// drawio-editor.component.ts
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-drawio-editor',
-  templateUrl: './drawio-editor.component.html',
-  styleUrls: ['./drawio-editor.component.css']
+  selector: 'app-teams-table-data',
+  templateUrl: './teams-table-data.component.html',
+  styleUrls: ['./teams-table-data.component.css']
 })
-export class DrawioEditorComponent implements AfterViewInit {
+export class TeamsTableDataComponent implements OnInit {
+  branchSource = new MatTableDataSource<any>([]);
+  originalData: any[] = [];
+  searchBarValue: string = '';
+  private searchSubject: Subject<string> = new Subject();
 
-  ngAfterViewInit(): void {
-    this.loadDrawio();
+  ngOnInit(): void {
+    // Load your data
+    this.service.getRepoFromDatabase(this.http).subscribe((item: any) => {
+      const data = item.filter(repo => !repo.name.startsWith('sdop') && !repo.topics.includes('sdop'));
+      this.originalData = data; // Store original data
+      this.branchSource = new MatTableDataSource<any>(this.originalData);
+      this.branchSource.sort = this.sort;
+      this.branchSource.paginator = this.batchPaginator;
+    });
+
+    // Debounced search
+    this.searchSubject.pipe(debounceTime(300)).subscribe(searchText => {
+      this.applySearch(searchText);
+    });
   }
 
-  loadDrawio(): void {
-    const iframe = document.createElement('iframe');
-    iframe.src = 'assets/drawio/index.html';  // Path to the Draw.io editor HTML file
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.border = '0';
-    document.getElementById('drawio-container')?.appendChild(iframe);
+  onSearchText(event: Event): void {
+    const input = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchBarValue = input || '';
+    this.searchSubject.next(this.searchBarValue);
   }
 
-  saveDiagram(): void {
-    // Logic to interact with the iframe and save the diagram
+  applySearch(searchValue: string): void {
+    if (!searchValue) {
+      this.resetData();
+    } else {
+      this.branchSource.data = this.originalData.filter((item: any) => {
+        return (
+          (item.name && item.name.toLowerCase().includes(searchValue)) ||
+          (item.id && item.id.toString().includes(searchValue)) ||
+          (item.defaultbranch && item.defaultbranch.toLowerCase().includes(searchValue)) ||
+          (item.fullname && item.fullname.toLowerCase().includes(searchValue))
+        );
+      });
+    }
+  }
+
+  resetData(): void {
+    this.branchSource.data = [...this.originalData]; // Reset the data source to the full original dataset
+  }
+
+  clearSearch(): void {
+    this.searchBarValue = '';
+    this.resetData();
   }
 }
 
-
-
-<!-- drawio-editor.component.html -->
-<div id="drawio-container" style="width: 100%; height: 80vh;"></div>
-<button (click)="saveDiagram()">Save</button>
