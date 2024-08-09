@@ -1,28 +1,45 @@
+import { debounceTime, Subject } from 'rxjs';
+
+// Inside your component class
+searchSubject = new Subject<string>();
+
+ngOnInit() {
+  this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
+    this.applyFilter(searchTerm);
+  });
+}
+
 onSearchText(event: Event) {
   const searchTerm = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  this.searchSubject.next(searchTerm);
+}
 
+applyFilter(searchTerm: string) {
   if (!searchTerm) {
-    // If search term is empty, reset the filtered data to original data
-    this.filteredTableData = [...this.branchSource.filteredData];
+    this.filteredTableData = [...this.branchSource.filteredData]; // Reset to full data
+    this.branchSource = new MatTableDataSource<any>(this.filteredTableData);
     return;
   }
 
   this.filteredTableData = this.branchSource.filteredData.filter((item: any) => {
     return this.searchInObject(item, searchTerm);
   });
-}
 
-searchInObject(obj: any, searchTerm: string): boolean {
+  this.branchSource = new MatTableDataSource<any>(this.filteredTableData);
+}
+---------------------------
+  searchInObject(obj: any, searchTerm: string): boolean {
   for (const key in obj) {
-    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== undefined) {
+    if (obj.hasOwnProperty(key) && obj[key] != null && obj[key] != undefined) {
       const value = obj[key].toString().toLowerCase();
       if (value.includes(searchTerm)) {
-        return true;
+        return true; // Early exit if a match is found
       }
     }
   }
   return false;
 }
+
 
 
 
