@@ -1,3 +1,39 @@
+addEventListener('message', ({ data }) => {
+  const { searchTerm, data: records } = data;
+
+  const filteredData = records.filter((item: any) => {
+    return Object.values(item).some(val =>
+      val && val.toString().toLowerCase().includes(searchTerm)
+    );
+  });
+
+  postMessage(filteredData);
+});
+
+
+
+applyFilter(searchTerm: string) {
+  if (!searchTerm) {
+    this.filteredTableData = [...this.branchSource.filteredData];
+    this.branchSource = new MatTableDataSource<any>(this.filteredTableData);
+    return;
+  }
+
+  // Using a Web Worker for heavy filtering operation
+  const worker = new Worker(new URL('./filter.worker', import.meta.url));
+  
+  worker.onmessage = ({ data }) => {
+    this.filteredTableData = data;
+    this.branchSource = new MatTableDataSource<any>(this.filteredTableData);
+  };
+
+  worker.postMessage({ data: this.branchSource.filteredData, searchTerm });
+}
+
+
+
+
+
 import { debounceTime, Subject } from 'rxjs';
 
 // Inside your component class
