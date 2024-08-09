@@ -9,6 +9,18 @@
   color: white !important; /* Custom selected text color */
 }
 
+applySearch() {
+  if (!this.searchBarValue || this.searchBarValue.trim() === '') {
+    this.filteredtabledata = [...this.branchSource.filteredData]; // Reset to full data if search bar is empty
+  } else {
+    const searchValue = this.searchBarValue.toLowerCase().trim();
+    this.filteredtabledata = this.branchSource.filteredData.filter((item: any) => {
+      return item.name && item.name.toLowerCase().includes(searchValue);
+    });
+  }
+  
+  this.branchSource = new MatTableDataSource<any>(this.filteredtabledata); // Update the data source
+}
 
 
 // drawio-editor.component.ts
