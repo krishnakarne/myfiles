@@ -1,3 +1,115 @@
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { GraphEditor } from '@zklogic/draw.io';
+
+@Component({
+  selector: 'app-draw-io-details',
+  templateUrl: './draw-io-details.component.html',
+  styleUrls: ['./draw-io-details.component.scss']
+})
+export class DrawIoDetailsComponent implements OnInit {
+  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
+  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
+  graphEditor: GraphEditor;
+
+  constructor(private spinner: NgxSpinnerService) {}
+
+  ngOnInit(): void {
+    this.spinner.show();
+
+    // Initialize the graph editor with actions and load any unsaved work
+    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      actions: {
+        save: this.saveDiagram.bind(this),
+        open: this.openDiagram.bind(this)
+      }
+    });
+
+    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      load: () => this.loadWorkFromLocalStorage().then(() => this.spinner.hide())
+    });
+
+    // Listen for changes to save to localStorage
+    this.graphEditor.onChange(() => {
+      this.saveWorkToLocalStorage();
+    });
+  }
+
+  saveWorkToLocalStorage(): void {
+    const diagramData = this.graphEditor.getXml(); // Get current diagram data in XML format
+    localStorage.setItem('unsavedDiagram', diagramData); // Save to localStorage
+  }
+
+  loadWorkFromLocalStorage(): Promise<void> {
+    return new Promise((resolve) => {
+      const savedData = localStorage.getItem('unsavedDiagram');
+      if (savedData) {
+        this.graphEditor.setXml(savedData); // Load the diagram data into the editor
+      }
+      resolve();
+    });
+  }
+
+  saveDiagram(): void {
+    const xml = this.graphEditor.getXml();
+
+    // Save the diagram to localStorage to preserve state across tab changes
+    localStorage.setItem('savedDiagram', xml);
+
+    // Trigger the download of the diagram as an XML file
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'diagram.xml';
+    a.click();
+  }
+
+  openDiagram(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml'; // Accept only XML files
+
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        this.loadDiagramFromFile(file);
+      }
+    };
+
+    input.click(); // Trigger the file selection dialog
+  }
+
+  loadDiagramFromFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target.result as string;
+      this.graphEditor.setXml(fileContent); // Load the content into the editor
+      localStorage.setItem('unsavedDiagram', fileContent); // Save to localStorage to keep track
+    };
+    reader.readAsText(file);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 saveDiagram(xml: any): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
