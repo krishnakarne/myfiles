@@ -1,23 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
-
-@Component({
-  selector: 'app-draw-io-details',
-  templateUrl: './draw-io-details.component.html',
-  styleUrls: ['./draw-io-details.component.scss']
-})
-export class DrawIoDetailsComponent implements OnInit {
-  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
-
-  constructor(private spinner: NgxSpinnerService) {}
-
-  ngOnInit(): void {
-    this.spinner.show();
-    // Initialization logic if needed
-    this.spinner.hide();
-  }
-
-  saveDiagramAsPNG(): void {
+saveDiagramAsPNG(): void {
     const container = this.container.nativeElement;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -27,23 +8,28 @@ export class DrawIoDetailsComponent implements OnInit {
     canvas.width = rect.width;
     canvas.height = rect.height;
 
-    // Set a white background color to the canvas (if needed)
+    // Set a background color to the canvas
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Debugging: Log the number of child elements
+    console.log('Number of child elements:', container.children.length);
+
     // Attempt to draw each child element of the container on the canvas
-    Array.from(container.children).forEach((child: Element) => {
-      const childRect = child.getBoundingClientRect();
-      ctx.fillStyle = window.getComputedStyle(child).backgroundColor || 'white';
-      ctx.fillRect(childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
+    Array.from(container.children).forEach((child: Element, index: number) => {
+        const childRect = child.getBoundingClientRect();
+        ctx.fillStyle = window.getComputedStyle(child).backgroundColor || 'white';
+        ctx.fillRect(childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
       
-      if (child instanceof HTMLImageElement) {
-        ctx.drawImage(child, childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
-      } else if (child.textContent) {
-        ctx.font = `${window.getComputedStyle(child).fontSize} ${window.getComputedStyle(child).fontFamily}`;
-        ctx.fillStyle = window.getComputedStyle(child).color;
-        ctx.fillText(child.textContent, childRect.left - rect.left, childRect.top - rect.top + parseInt(window.getComputedStyle(child).fontSize));
-      }
+        if (child instanceof HTMLImageElement) {
+            console.log(`Drawing image element: ${index}`);
+            ctx.drawImage(child, childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
+        } else if (child.textContent) {
+            console.log(`Drawing text content: ${child.textContent}`);
+            ctx.font = `${window.getComputedStyle(child).fontSize} ${window.getComputedStyle(child).fontFamily}`;
+            ctx.fillStyle = window.getComputedStyle(child).color;
+            ctx.fillText(child.textContent, childRect.left - rect.left, childRect.top - rect.top + parseInt(window.getComputedStyle(child).fontSize));
+        }
     });
 
     // Convert the canvas to a PNG data URL
@@ -54,5 +40,4 @@ export class DrawIoDetailsComponent implements OnInit {
     a.href = pngDataUrl;
     a.download = 'diagram.png';
     a.click();
-  }
 }
