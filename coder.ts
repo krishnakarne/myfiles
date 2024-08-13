@@ -1,58 +1,41 @@
-export class DrawIoDetailsComponent implements OnInit {
-  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
-  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
-  graphEditor: GraphEditor;
-
-  constructor(private spinner: NgxSpinnerService) {}
-
-  ngOnInit(): void {
-    this.spinner.show();
-
-    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"><root><Diagram name="MyDiagram"></Diagram></root></mxGraphModel>';
-
-    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      actions: {
-        save: this.saveDiagram.bind(this)  // Bind your custom save logic to the existing save action
-      }
-    });
-
-    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      load: () => this.graphEditor.setGraphEditorData({ xml }).then(() => {
-        this.spinner.hide();
-      })
-    });
-  }
-
-  saveDiagram(xml: string): Promise<void> {
+saveDiagram(xml: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      try {
-        // Extract the diagram name from the XML
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xml, 'application/xml');
-        const diagramName = xmlDoc.getElementsByTagName('Diagram')[0].getAttribute('name') || 'diagram';
+        try {
+            // Parse the XML and try to find the diagram name
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xml, 'application/xml');
 
-        // Store diagram data in local storage
-        localStorage.setItem('unsavedDiagram', xml);
+            // Attempt to find the name attribute in any element that might represent the diagram
+            let diagramName = 'diagram'; // Default name
+            const diagramElements = xmlDoc.getElementsByTagName('*'); // Get all elements
 
-        // Trigger download of the diagram with the extracted name
-        const blob = new Blob([xml], { type: 'text/xml' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${diagramName}.xml`;  // Use the extracted diagram name
-        a.click();
-        window.URL.revokeObjectURL(url);
+            for (let i = 0; i < diagramElements.length; i++) {
+                const element = diagramElements[i];
+                if (element.hasAttribute('name')) {
+                    diagramName = element.getAttribute('name')!;
+                    break;
+                }
+            }
 
-        resolve();
-      } catch (error) {
-        console.error('Save failed', error);
-        reject(error);
-      }
+            // Store diagram data in local storage
+            localStorage.setItem('unsavedDiagram', xml);
+
+            // Trigger download of the diagram with the extracted name
+            const blob = new Blob([xml], { type: 'text/xml' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${diagramName}.xml`;  // Use the extracted diagram name
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            resolve();
+        } catch (error) {
+            console.error('Save failed', error);
+            reject(error);
+        }
     });
-  }
 }
-
-
 
 
 
