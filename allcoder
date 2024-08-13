@@ -1,3 +1,171 @@
+
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { GraphEditor } from '@zklogic/draw.io';
+
+@Component({
+  selector: 'app-draw-io-details',
+  templateUrl: './draw-io-details.component.html',
+  styleUrls: ['./draw-io-details.component.scss']
+})
+export class DrawIoDetailsComponent implements OnInit {
+  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
+  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
+  graphEditor: GraphEditor;
+
+  constructor(private spinner: NgxSpinnerService) {}
+
+  ngOnInit(): void {
+    this.spinner.show();
+
+    // Initialize the graph editor with actions for saving and opening diagrams
+    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      actions: {
+        save: this.saveDiagram.bind(this),
+        open: this.openDiagram.bind(this)
+      }
+    });
+
+    // Initialize the editor and load any unsaved work from localStorage
+    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      load: () => this.loadWorkFromLocalStorage().then(() => this.spinner.hide())
+    });
+
+    // Listen for changes and save the current work to localStorage
+    this.graphEditor.onChange(() => {
+      this.saveWorkToLocalStorage();
+    });
+
+    // Attach event listener to the "Open from" menu item
+    this.attachOpenFromMenuListener();
+  }
+
+  attachOpenFromMenuListener(): void {
+    // Assuming the "Open from" menu item has a unique identifier or can be selected via a CSS class
+    const openFromMenuItem = document.querySelector('[data-action="open"]');
+    if (openFromMenuItem) {
+      openFromMenuItem.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.openDiagram();
+      });
+    }
+  }
+
+  saveWorkToLocalStorage(): void {
+    const diagramData = this.graphEditor.getXml(); // Get current diagram data in XML format
+    localStorage.setItem('unsavedDiagram', diagramData); // Save to localStorage
+  }
+
+  loadWorkFromLocalStorage(): Promise<void> {
+    return new Promise((resolve) => {
+      const savedData = localStorage.getItem('unsavedDiagram');
+      if (savedData) {
+        this.graphEditor.setXml(savedData); // Load the diagram data into the editor
+      }
+      resolve();
+    });
+  }
+
+  saveDiagram(): void {
+    const xml = this.graphEditor.getXml();
+
+    // Save the diagram to localStorage to preserve state across tab changes
+    localStorage.setItem('savedDiagram', xml);
+
+    // Trigger the download of the diagram as an XML file
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'diagram.xml';
+    a.click();
+  }
+
+  openDiagram(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml, .png'; // Accept XML and PNG files
+
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (file.type === 'image/png') {
+          this.loadPngAsImage(file);
+        } else if (file.type === 'application/xml') {
+          this.loadDiagramFromFile(file);
+        }
+      }
+    };
+
+    input.click(); // Trigger the file selection dialog
+  }
+
+  loadDiagramFromFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const fileContent = event.target.result as string;
+      this.graphEditor.setXml(fileContent); // Load the content into the editor
+      localStorage.setItem('unsavedDiagram', fileContent); // Save to localStorage to keep track
+    };
+    reader.readAsText(file);
+  }
+
+  loadPngAsImage(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      const imageSrc = event.target.result; // Base64 encoded image
+      this.addImageToCanvas(imageSrc);
+    };
+    reader.readAsDataURL(file); // Read file as Data URL (base64)
+  }
+
+  addImageToCanvas(imageSrc: string): void {
+    const graph = this.graphEditor.getGraph();
+    const model = graph.getModel();
+
+    model.beginUpdate();
+    try {
+      const parent = graph.getDefaultParent();
+      graph.insertVertex(parent, null, '', 20, 20, 200, 200, `shape=image;image=${imageSrc};`);
+    } finally {
+      model.endUpdate();
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { GraphEditor } from '@zklogic/draw.io';
