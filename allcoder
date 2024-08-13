@@ -1,3 +1,10 @@
+    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      actions: {
+        save: this.saveDiagramAsSVG.bind(this)  // Bind the save action to save as SVG
+      }
+    });
+
+
 saveDiagramAsSVG(): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
