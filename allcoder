@@ -20,33 +20,16 @@ saveDiagram(xml: string): Promise<void> {
             // Create a canvas to render the diagram content
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
+
             // Set the canvas dimensions based on XML content or a fixed size
             canvas.width = 1000; // You may calculate this based on XML content
             canvas.height = 1000; // You may calculate this based on XML content
 
-            // Example rendering - this should be replaced by actual XML content rendering logic
-            // For instance, drawing shapes, text, or images based on XML data
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Example rendering logic based on extracted XML
+            const shapes = xmlDoc.getElementsByTagName('shape'); // Assuming 'shape' elements represent shapes
 
-            // Example: Drawing a simple shape
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(50, 50, 100, 100);
-
-            // Convert the canvas to a PNG data URL
-            const pngDataUrl = canvas.toDataURL('image/png');
-
-            // Create a download link for the PNG
-            const a = document.createElement('a');
-            a.href = pngDataUrl;
-            a.download = `${diagramName}.png`; // Use the extracted diagram name
-            a.click();
-
-            resolve();
-        } catch (error) {
-            console.error('Save failed', error);
-            reject(error);
-        }
-    });
-}
+            for (let i = 0; i < shapes.length; i++) {
+                const shape = shapes[i];
+                const x = parseFloat(shape.getAttribute('x')) || 0;
+                const y = parseFloat(shape.getAttribute('y')) || 0;
+                const width =
