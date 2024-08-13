@@ -16,6 +16,10 @@ saveDiagram(xml: string): Promise<void> {
                 throw new Error('Error parsing XML: ' + parseError[0].textContent);
             }
 
+            // Format the XML properly
+            const serializer = new XMLSerializer();
+            const formattedXml = serializer.serializeToString(xmlDoc);
+
             // Extract the diagram name from the XML
             let diagramName = 'diagram'; // Default name
             const diagramElements = xmlDoc.getElementsByTagName('*'); // Get all elements
@@ -29,10 +33,10 @@ saveDiagram(xml: string): Promise<void> {
             }
 
             // Store diagram data in local storage
-            localStorage.setItem('unsavedDiagram', xml);
+            localStorage.setItem('unsavedDiagram', formattedXml);
 
             // Trigger download of the diagram with the extracted name
-            const blob = new Blob([xml], { type: 'text/xml' });
+            const blob = new Blob([formattedXml], { type: 'text/xml' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -47,7 +51,6 @@ saveDiagram(xml: string): Promise<void> {
         }
     });
 }
-
 
 
 
