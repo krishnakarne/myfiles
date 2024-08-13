@@ -1,43 +1,52 @@
-saveDiagramAsPNG(): void {
-    const container = this.container.nativeElement;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+saveDiagram(xml: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        try {
+            // Parse the XML and try to find the diagram name
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xml, 'application/xml');
 
-    // Set canvas dimensions to match container dimensions
-    const rect = container.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+            // Attempt to find the name attribute in any element that might represent the diagram
+            let diagramName = 'diagram'; // Default name
+            const diagramElements = xmlDoc.getElementsByTagName('*'); // Get all elements
 
-    // Set a background color to the canvas
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < diagramElements.length; i++) {
+                const element = diagramElements[i];
+                if (element.hasAttribute('name')) {
+                    diagramName = element.getAttribute('name')!;
+                    break;
+                }
+            }
 
-    // Debugging: Log the number of child elements
-    console.log('Number of child elements:', container.children.length);
+            // Create a canvas to render the diagram content
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set the canvas dimensions based on XML content or a fixed size
+            canvas.width = 1000; // You may calculate this based on XML content
+            canvas.height = 1000; // You may calculate this based on XML content
 
-    // Attempt to draw each child element of the container on the canvas
-    Array.from(container.children).forEach((child: Element, index: number) => {
-        const childRect = child.getBoundingClientRect();
-        ctx.fillStyle = window.getComputedStyle(child).backgroundColor || 'white';
-        ctx.fillRect(childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
-      
-        if (child instanceof HTMLImageElement) {
-            console.log(`Drawing image element: ${index}`);
-            ctx.drawImage(child, childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
-        } else if (child.textContent) {
-            console.log(`Drawing text content: ${child.textContent}`);
-            ctx.font = `${window.getComputedStyle(child).fontSize} ${window.getComputedStyle(child).fontFamily}`;
-            ctx.fillStyle = window.getComputedStyle(child).color;
-            ctx.fillText(child.textContent, childRect.left - rect.left, childRect.top - rect.top + parseInt(window.getComputedStyle(child).fontSize));
+            // Example rendering - this should be replaced by actual XML content rendering logic
+            // For instance, drawing shapes, text, or images based on XML data
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Example: Drawing a simple shape
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(50, 50, 100, 100);
+
+            // Convert the canvas to a PNG data URL
+            const pngDataUrl = canvas.toDataURL('image/png');
+
+            // Create a download link for the PNG
+            const a = document.createElement('a');
+            a.href = pngDataUrl;
+            a.download = `${diagramName}.png`; // Use the extracted diagram name
+            a.click();
+
+            resolve();
+        } catch (error) {
+            console.error('Save failed', error);
+            reject(error);
         }
     });
-
-    // Convert the canvas to a PNG data URL
-    const pngDataUrl = canvas.toDataURL('image/png');
-
-    // Trigger download
-    const a = document.createElement('a');
-    a.href = pngDataUrl;
-    a.download = 'diagram.png';
-    a.click();
 }
