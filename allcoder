@@ -35,9 +35,12 @@ saveDiagramAsImage(imageFormat: 'png' | 'jpg'): Promise<void> {
                 // Create a download link
                 const a = document.createElement('a');
                 a.href = imageDataUrl;
-                a.download = `diagram.${imageFormat}`;
-                a.click();
 
+                // Ensure the file name is properly set as a string
+                a.download = `diagram.${imageFormat}`;
+
+                // Trigger the download
+                a.click();
                 resolve();
             };
             img.onerror = (error) => {
