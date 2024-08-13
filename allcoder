@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { GraphEditor } from '@zklogic/draw.io';
 
 @Component({
   selector: 'app-draw-io-details',
@@ -9,84 +8,67 @@ import { GraphEditor } from '@zklogic/draw.io';
 })
 export class DrawIoDetailsComponent implements OnInit {
   @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
-  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
-  graphEditor: GraphEditor;
 
   constructor(private spinner: NgxSpinnerService) {}
 
   ngOnInit(): void {
     this.spinner.show();
-
-    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"><root></root></mxGraphModel>';
-
-    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      actions: {
-        save: this.saveDiagramAsPNG.bind(this)  // Bind the save action to save as PNG
-      }
-    });
-
-    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      load: () => this.graphEditor.setGraphEditorData({ xml }).then(() => {
-        this.spinner.hide();
-      })
-    });
+    // Initialization logic if needed
+    this.spinner.hide();
   }
 
-  saveDiagramAsPNG(): Promise<void> {
-    return new Promise((resolve, reject) => {
-        try {
-            // Get the SVG element rendered by the diagram
-            const container = this.container.nativeElement;
-            const svgElement = container.querySelector('svg'); // Assuming the diagram is rendered as an SVG
+  saveDiagramAsPNG(): void {
+    const container = this.container.nativeElement;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-            if (!svgElement) {
-                throw new Error('SVG element not found in the container');
-            }
+    // Set canvas dimensions to match container dimensions
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 
-            // Create a canvas element
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+    // Set white background
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Set canvas dimensions to match the SVG
-            const svgRect = svgElement.getBoundingClientRect();
-            canvas.width = svgRect.width;
-            canvas.height = svgRect.height;
+    // Recursive function to draw elements on canvas
+    const drawElement = (element: HTMLElement, x: number, y: number) => {
+      const style = window.getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
 
-            // Serialize the SVG content
-            const svgData = new XMLSerializer().serializeToString(svgElement);
+      // Draw background color
+      if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') {
+        ctx.fillStyle = style.backgroundColor;
+        ctx.fillRect(x, y, rect.width, rect.height);
+      }
 
-            // Create an Image object
-            const img = new Image();
-            img.onload = () => {
-                // Draw the SVG onto the canvas
-                ctx.drawImage(img, 0, 0);
+      // Draw text
+      if (element.textContent) {
+        ctx.font = `${style.fontSize} ${style.fontFamily}`;
+        ctx.fillStyle = style.color;
+        ctx.fillText(element.textContent, x, y + parseInt(style.fontSize));
+      }
 
-                // Convert the canvas to a data URL in PNG format
-                const pngDataUrl = canvas.toDataURL('image/png');
+      // Handle images
+      if (element instanceof HTMLImageElement) {
+        ctx.drawImage(element, x, y, rect.width, rect.height);
+      }
 
-                // Create a download link
-                const a = document.createElement('a');
-                a.href = pngDataUrl;
-                a.download = `diagram.png`; // Set the file name
+      // Recursively draw child elements
+      Array.from(element.children).forEach((child: HTMLElement) => {
+        const childRect = child.getBoundingClientRect();
+        drawElement(child, childRect.left - rect.left, childRect.top - rect.top);
+      });
+    };
 
-                // Trigger the download
-                a.click();
+    // Start drawing from the container
+    drawElement(container, 0, 0);
 
-                resolve();
-            };
-
-            // Handle image loading errors
-            img.onerror = (error) => {
-                console.error('Image rendering failed', error);
-                reject(error);
-            };
-
-            // Set the source of the image to the SVG data
-            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
-        } catch (error) {
-            console.error('Save as PNG failed', error);
-            reject(error);
-        }
-    });
+    // Convert the canvas to a PNG data URL and trigger download
+    const pngDataUrl = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = pngDataUrl;
+    a.download = 'diagram.png';  // File name
+    a.click();
   }
 }
