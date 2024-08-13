@@ -1,11 +1,22 @@
 saveDiagram(xml: string): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
-            // Parse the XML and try to find the diagram name
+            // Ensure the XML is properly serialized as a string
+            if (typeof xml !== 'string') {
+                throw new Error('Invalid XML format: Expected a string');
+            }
+
+            // Parse the XML string to check if it's well-formed
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(xml, 'application/xml');
 
-            // Attempt to find the name attribute in any element that might represent the diagram
+            // Check for parsing errors
+            const parseError = xmlDoc.getElementsByTagName('parsererror');
+            if (parseError.length > 0) {
+                throw new Error('Error parsing XML: ' + parseError[0].textContent);
+            }
+
+            // Extract the diagram name from the XML
             let diagramName = 'diagram'; // Default name
             const diagramElements = xmlDoc.getElementsByTagName('*'); // Get all elements
 
@@ -36,8 +47,6 @@ saveDiagram(xml: string): Promise<void> {
         }
     });
 }
-
-
 
 
 
