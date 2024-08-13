@@ -1,14 +1,41 @@
+   import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { GraphEditor } from '@zklogic/draw.io';
+
+@Component({
+  selector: 'app-draw-io-details',
+  templateUrl: './draw-io-details.component.html',
+  styleUrls: ['./draw-io-details.component.scss']
+})
+export class DrawIoDetailsComponent implements OnInit {
+  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
+  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
+  graphEditor: GraphEditor;
+
+  constructor(private spinner: NgxSpinnerService) {}
+
+  ngOnInit(): void {
+    this.spinner.show();
+
+    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"><root></root></mxGraphModel>';
+
     this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
       actions: {
         save: this.saveDiagramAsSVG.bind(this)  // Bind the save action to save as SVG
       }
     });
 
+    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      load: () => this.graphEditor.setGraphEditorData({ xml }).then(() => {
+        this.spinner.hide();
+      })
+    });
+  }
 
-saveDiagramAsSVG(): Promise<void> {
+  saveDiagramAsSVG(): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
-            // Get the container where the diagram is rendered
+            // Get the SVG element rendered by the diagram
             const container = this.container.nativeElement;
             const svgElement = container.querySelector('svg'); // Assuming the diagram is rendered as an SVG
 
@@ -16,22 +43,20 @@ saveDiagramAsSVG(): Promise<void> {
                 throw new Error('SVG element not found in the container');
             }
 
-            // Serialize the SVG content to include Draw.io specific XML data
+            // Serialize the SVG content
             const svgData = new XMLSerializer().serializeToString(svgElement);
 
-            // Add any necessary Draw.io specific XML metadata here if required (optional)
-            // This might include embedding the diagram's XML data within the SVG for later editing
+            // Add namespaces to the SVG to ensure proper rendering
+            let serializedSvg = svgData.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
 
-            // Create a Blob from the SVG data
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            // Create a Blob from the serialized SVG data
+            const svgBlob = new Blob([serializedSvg], { type: 'image/svg+xml;charset=utf-8' });
 
-            // Create a download link
+            // Create a download link for the SVG
             const url = URL.createObjectURL(svgBlob);
             const a = document.createElement('a');
             a.href = url;
-
-            // Set the default filename for the SVG
-            a.download = `diagram.svg`;
+            a.download = `diagram.svg`; // Set the file name
 
             // Trigger the download
             a.click();
@@ -43,4 +68,5 @@ saveDiagramAsSVG(): Promise<void> {
             reject(error);
         }
     });
+  }
 }
