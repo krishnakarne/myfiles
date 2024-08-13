@@ -1,3 +1,30 @@
+
+saveDiagramAsImage(imageFormat: 'png' | 'jpg'): Promise<void> {
+    return new Promise((resolve, reject) => {
+        try {
+            // Export diagram to PNG or JPG
+            this.graphEditor.exportAs(imageFormat, (dataUrl: string) => {
+                // Create a download link for the image
+                const a = document.createElement('a');
+                a.href = dataUrl;
+
+                // Set the default filename
+                a.download = `diagram.${imageFormat}`;
+
+                // Trigger the download
+                a.click();
+                resolve();
+            }, (error) => {
+                console.error('Export failed', error);
+                reject(error);
+            });
+        } catch (error) {
+            console.error('Save as image failed', error);
+            reject(error);
+        }
+    });
+}
+
 saveDiagram(xml: string): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
