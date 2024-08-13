@@ -27,48 +27,32 @@ export class DrawIoDetailsComponent implements OnInit {
     canvas.width = rect.width;
     canvas.height = rect.height;
 
-    // Set white background
+    // Set a white background color to the canvas (if needed)
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Recursive function to draw elements on canvas
-    const drawElement = (element: HTMLElement, x: number, y: number) => {
-      const style = window.getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-
-      // Draw background color
-      if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') {
-        ctx.fillStyle = style.backgroundColor;
-        ctx.fillRect(x, y, rect.width, rect.height);
+    // Attempt to draw each child element of the container on the canvas
+    Array.from(container.children).forEach((child: Element) => {
+      const childRect = child.getBoundingClientRect();
+      ctx.fillStyle = window.getComputedStyle(child).backgroundColor || 'white';
+      ctx.fillRect(childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
+      
+      if (child instanceof HTMLImageElement) {
+        ctx.drawImage(child, childRect.left - rect.left, childRect.top - rect.top, childRect.width, childRect.height);
+      } else if (child.textContent) {
+        ctx.font = `${window.getComputedStyle(child).fontSize} ${window.getComputedStyle(child).fontFamily}`;
+        ctx.fillStyle = window.getComputedStyle(child).color;
+        ctx.fillText(child.textContent, childRect.left - rect.left, childRect.top - rect.top + parseInt(window.getComputedStyle(child).fontSize));
       }
+    });
 
-      // Draw text
-      if (element.textContent) {
-        ctx.font = `${style.fontSize} ${style.fontFamily}`;
-        ctx.fillStyle = style.color;
-        ctx.fillText(element.textContent, x, y + parseInt(style.fontSize));
-      }
-
-      // Handle images
-      if (element instanceof HTMLImageElement) {
-        ctx.drawImage(element, x, y, rect.width, rect.height);
-      }
-
-      // Recursively draw child elements
-      Array.from(element.children).forEach((child: HTMLElement) => {
-        const childRect = child.getBoundingClientRect();
-        drawElement(child, childRect.left - rect.left, childRect.top - rect.top);
-      });
-    };
-
-    // Start drawing from the container
-    drawElement(container, 0, 0);
-
-    // Convert the canvas to a PNG data URL and trigger download
+    // Convert the canvas to a PNG data URL
     const pngDataUrl = canvas.toDataURL('image/png');
+
+    // Trigger download
     const a = document.createElement('a');
     a.href = pngDataUrl;
-    a.download = 'diagram.png';  // File name
+    a.download = 'diagram.png';
     a.click();
   }
 }
