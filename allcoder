@@ -1,4 +1,4 @@
-   import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { GraphEditor } from '@zklogic/draw.io';
 
@@ -21,7 +21,7 @@ export class DrawIoDetailsComponent implements OnInit {
 
     this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
       actions: {
-        save: this.saveDiagramAsSVG.bind(this)  // Bind the save action to save as SVG
+        save: this.saveDiagramAsPNG.bind(this)  // Bind the save action to save as PNG
       }
     });
 
@@ -32,7 +32,7 @@ export class DrawIoDetailsComponent implements OnInit {
     });
   }
 
-  saveDiagramAsSVG(): Promise<void> {
+  saveDiagramAsPNG(): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
             // Get the SVG element rendered by the diagram
@@ -43,28 +43,48 @@ export class DrawIoDetailsComponent implements OnInit {
                 throw new Error('SVG element not found in the container');
             }
 
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas dimensions to match the SVG
+            const svgRect = svgElement.getBoundingClientRect();
+            canvas.width = svgRect.width;
+            canvas.height = svgRect.height;
+
             // Serialize the SVG content
             const svgData = new XMLSerializer().serializeToString(svgElement);
 
-            // Add namespaces to the SVG to ensure proper rendering
-            let serializedSvg = svgData.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+            // Create an Image object
+            const img = new Image();
+            img.onload = () => {
+                // Draw the SVG onto the canvas
+                ctx.drawImage(img, 0, 0);
 
-            // Create a Blob from the serialized SVG data
-            const svgBlob = new Blob([serializedSvg], { type: 'image/svg+xml;charset=utf-8' });
+                // Convert the canvas to a data URL in PNG format
+                const pngDataUrl = canvas.toDataURL('image/png');
 
-            // Create a download link for the SVG
-            const url = URL.createObjectURL(svgBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `diagram.svg`; // Set the file name
+                // Create a download link
+                const a = document.createElement('a');
+                a.href = pngDataUrl;
+                a.download = `diagram.png`; // Set the file name
 
-            // Trigger the download
-            a.click();
-            URL.revokeObjectURL(url);
+                // Trigger the download
+                a.click();
 
-            resolve();
+                resolve();
+            };
+
+            // Handle image loading errors
+            img.onerror = (error) => {
+                console.error('Image rendering failed', error);
+                reject(error);
+            };
+
+            // Set the source of the image to the SVG data
+            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
         } catch (error) {
-            console.error('Save as SVG failed', error);
+            console.error('Save as PNG failed', error);
             reject(error);
         }
     });
