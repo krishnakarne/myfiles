@@ -1,55 +1,45 @@
-saveDiagram(xml: string): Promise<void> {
+saveDiagram(xml: any): Promise<void> {
     return new Promise((resolve, reject) => {
         try {
-            // Parse the XML and try to find the diagram name
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xml, 'application/xml');
+            // Extract the Base64 encoded SVG from the XML
+            const base64Data = xml.image.base64Encoded;
 
-            // Attempt to find the name attribute in any element that might represent the diagram
-            let diagramName = 'diagram'; // Default name
-            const diagramElements = xmlDoc.getElementsByTagName('*'); // Get all elements
-
-            for (let i = 0; i < diagramElements.length; i++) {
-                const element = diagramElements[i];
-                if (element.hasAttribute('name')) {
-                    diagramName = element.getAttribute('name')!;
-                    break;
-                }
+            if (!base64Data) {
+                throw new Error('No base64 data found in the XML');
             }
 
-            // Create a canvas to render the diagram content
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            // Decode the Base64 string
+            const svgData = atob(base64Data);
 
-            // Set the canvas dimensions based on XML content or a fixed size
-            canvas.width = 1000; // You may calculate this based on XML content
-            canvas.height = 1000; // You may calculate this based on XML content
+            // Create an image element
+            const img = new Image();
+            img.src = 'data:image/svg+xml;base64,' + base64Data;
 
-            // Example rendering logic based on extracted XML
-            const shapes = xmlDoc.getElementsByTagName('shape'); // Assuming 'shape' elements represent shapes
+            img.onload = () => {
+                // Create a canvas to render the SVG
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
 
-            for (let i = 0; i < shapes.length; i++) {
-                const shape = shapes[i];
-                const x = parseFloat(shape.getAttribute('x')) || 0;
-                const y = parseFloat(shape.getAttribute('y')) || 0;
-                const width = parseFloat(shape.getAttribute('width')) || 100;
-                const height = parseFloat(shape.getAttribute('height')) || 100;
-                const fill = shape.getAttribute('fill') || 'blue';
+                // Draw the SVG onto the canvas
+                ctx.drawImage(img, 0, 0);
 
-                ctx.fillStyle = fill;
-                ctx.fillRect(x, y, width, height);
-            }
+                // Convert the canvas to a PNG data URL
+                const pngDataUrl = canvas.toDataURL('image/png');
 
-            // Convert the canvas to a PNG data URL
-            const pngDataUrl = canvas.toDataURL('image/png');
+                // Create a download link for the PNG
+                const a = document.createElement('a');
+                a.href = pngDataUrl;
+                a.download = `${xml.name || 'diagram'}.png`; // Use the diagram name or default
+                a.click();
 
-            // Create a download link for the PNG
-            const a = document.createElement('a');
-            a.href = pngDataUrl;
-            a.download = `${diagramName}.png`; // Use the extracted diagram name
-            a.click();
+                resolve();
+            };
 
-            resolve();
+            img.onerror = (error) => {
+                reject(new Error('Failed to load the SVG image'));
+            };
         } catch (error) {
             console.error('Save failed', error);
             reject(error);
