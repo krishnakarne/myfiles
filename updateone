@@ -1,25 +1,52 @@
-onSearchText(event: Event) {
-  const input = (event.target as HTMLInputElement).value.toLowerCase();
+export class DrawIoDetailsComponent implements OnInit {
+  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
+  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
+  graphEditor: GraphEditor;
 
-  if (!input || input.trim() === '') {
-    // If the search input is empty, reset the filtered data
-    this.filteredTableData = [...this.branchSource.filteredData];
-  } else {
-    // Filter the data based on the search input
-    this.filteredTableData = this.branchSource.filteredData.filter((data: any) => {
-      return this.objectValuesToString(data).includes(input);
+  constructor(private spinner: NgxSpinnerService) {}
+
+  ngOnInit(): void {
+    this.spinner.show();
+
+    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"></mxGraphModel>';
+
+    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      actions: {
+        save: this.saveDiagram.bind(this)  // Bind your custom save logic to the existing save action
+      }
+    });
+
+    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
+      load: () => this.graphEditor.setGraphEditorData({ xml }).then(() => {
+        this.spinner.hide();
+      })
+    });
+  }
+
+  saveDiagram(xml: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        // Handle saving logic here
+        // Store diagram data in local storage (optional)
+        localStorage.setItem('unsavedDiagram', xml);
+
+        // Trigger download of the diagram
+        const blob = new Blob([xml], { type: 'text/xml' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'diagram.xml';  // You can customize the file name
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        resolve();
+      } catch (error) {
+        console.error('Save failed', error);
+        reject(error);
+      }
     });
   }
 }
-
-objectValuesToString(data: any): string {
-  return Object.values(data)
-    .filter(val => val !== null && val !== undefined) // Filter out null or undefined values
-    .map(val => val.toString().toLowerCase()) // Convert to string and lowercase
-    .join(' '); // Join all values into a single string
-}
-
-
 
 
 applySearch(): any[] {
