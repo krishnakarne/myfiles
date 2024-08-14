@@ -1,3 +1,55 @@
+openDiagram(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xml, .png'; // Accept XML and PNG files
+
+    input.onchange = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+            let fileName = file.name;
+            const fileExtension = fileName.split('.').pop();
+            
+            // Modify filename if necessary
+            if (fileExtension === 'xml' || fileExtension === 'png') {
+                fileName = fileName.replace(`.${fileExtension}`, ''); // Remove the extension
+            }
+
+            // Perform actions based on the file type
+            if (file.type === 'image/png') {
+                this.loadPngAsImage(file);
+            } else if (file.type === 'application/xml') {
+                this.loadDiagramFromFile(file);
+            } else {
+                console.error('Unsupported file type');
+            }
+        }
+    };
+
+    input.click(); // Trigger the file selection dialog
+}
+
+loadDiagramFromFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const fileContent = event.target.result as string;
+            this.graphEditor.setXml(fileContent); // Load the content into the editor
+
+            // Display the filename without extension
+            this.graphEditor.setFileName(file.name.replace('.xml', '')); 
+
+            localStorage.setItem('unsavedDiagram', fileContent); // Save to localStorage to keep track
+        } catch (error) {
+            console.error('Error loading diagram file', error);
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+
+
+
 
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
