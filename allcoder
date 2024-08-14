@@ -1,4 +1,15 @@
-  <ng-container matColumnDef="date">
+.mat-row td,
+.mat-row th {
+  border-bottom: none;
+  vertical-align: middle;
+}
+
+.mat-row:nth-child(even) td,
+.mat-row:nth-child(even) th {
+  background-color: #f9f9f9;
+}
+
+<ng-container matColumnDef="date">
     <th mat-header-cell *matHeaderCellDef> Date </th>
     <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="shouldMerge(i, 'day') ? rowSpanCount('day') : 1">
       <span *ngIf="shouldMerge(i, 'day')">{{element.day}}</span>
