@@ -1,3 +1,10 @@
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef> Date </th>
+    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="shouldMerge(i, 'day') ? rowSpanCount('day') : 1">
+      <span *ngIf="shouldMerge(i, 'day')">{{element.day}}</span>
+    </td>
+  </ng-container>
+
 .mat-cell, .mat-header-cell {
   border: none;
   padding: 8px; /* Adjust padding as needed */
