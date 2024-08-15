@@ -1,3 +1,21 @@
+interface GroupedRow {
+  day: string;
+  total_suggestions_count: number;
+  total_acceptances_count: number;
+  total_lines_suggested: number;
+  total_lines_accepted: number;
+  total_active_users: number;
+  language: string;
+  editor: string;
+  rowspan: number;
+}
+
+interface GroupedData {
+  key: string;
+  children: GroupedRow[];
+  rowspan: number;
+}
+
 groupBy(data: any[], keys: string[]) {
   const grouped = data.reduce((acc, row) => {
     const key = keys.map(k => row[k]).join('|');
