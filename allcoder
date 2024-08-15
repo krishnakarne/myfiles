@@ -1,3 +1,49 @@
+ngOnInit(){
+    this.getRepoInfoData();
+}
+
+getRepoInfoData() {
+    this.http.get<any[]>(this.getCopiloturl).subscribe((response: any) => {
+        this.copilotDetails = response;
+
+        this.copilotData = new MatTableDataSource<any>(response.flatMap((data: any) =>
+            data.breakdown.map((breakdown: any) => ({
+                day: data.day,
+                total_suggestions_count: data.total_suggestions_count,
+                total_acceptances_count: data.total_acceptances_count,
+                total_lines_suggested: data.total_lines_suggested,
+                total_lines_accepted: data.total_lines_accepted,
+                total_active_users: data.total_active_users,
+                language: breakdown.language,
+                editor: breakdown.editor,
+            }))
+        ));
+
+        this.filteredtabledata = this.copilotData.filteredData;
+
+        // Group the data
+        this.groupedData = this.groupBy(this.copilotData.filteredData, ['day', 'total_suggestions_count', 'total_acceptances_count', 'total_lines_suggested', 'total_lines_accepted', 'total_active_users']);
+        console.log("grouped data", this.groupedData);
+
+        // Flatten the grouped data and assign row spans
+        const flattenedData = Object.values(this.groupedData).flatMap(group => 
+            group.children.map((child, index) => ({
+                ...child,
+                rowspan: index === 0 ? group.rowspan : 0
+            }))
+        );
+
+        // Set the flattened data back to the MatTableDataSource
+        this.copilotData.data = flattenedData;
+
+        // Now, calculate row spans if needed and set up other configurations
+        this.calculateRowSpans();
+        this.copilotData.paginator = this.batchPaginator;
+    });
+}
+
+
+
 groupBy(data: any[], keys: string[]) {
   const grouped = data.reduce((acc, row) => {
     const key = keys.map(k => row[k]).join('|');
