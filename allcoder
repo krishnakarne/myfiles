@@ -1,3 +1,112 @@
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { GraphEditorIn, GraphXmlData } from 'some-graph-editor-library'; // Replace with actual import
+
+@Component({
+  selector: 'app-draw-io-details',
+  templateUrl: './draw-io-details.component.html',
+  styleUrls: ['./draw-io-details.component.scss'],
+})
+export class DrawIoDetailsComponent implements OnInit {
+  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
+  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
+  graphEditor: GraphEditorIn = new GraphEditor();
+
+  constructor(private spinner: NgxSpinnerService) {}
+
+  ngOnInit(): void {
+    this.spinner.show();
+    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1">...</mxGraphModel>';
+
+    this.graphEditor.initialize(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement);
+
+    // Load initial data into the graph editor
+    this.graphEditor.setGraphEditorData({ xml: xml } as GraphXmlData)
+      .then(() => {
+        this.spinner.hide();
+      })
+      .catch((error) => {
+        console.error('Failed to set graph data:', error);
+        this.spinner.hide();
+      });
+  }
+
+  // Function to trigger the native file save dialog
+  saveDiagram(xml: any): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const base64Data = xml.image.base64Encoded;
+        if (!base64Data) {
+          throw new Error('No base64 data found in the XML');
+        }
+
+        const img = new Image();
+        img.src = 'data:image/svg+xml;base64,' + base64Data;
+
+        img.onload = async () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const pngDataUrl = canvas.toDataURL('image/png');
+
+          const handle = await window.showSaveFilePicker({
+            suggestedName: `${xml.name || 'diagram'}.png`,
+            types: [
+              {
+                description: 'PNG Image',
+                accept: { 'image/png': ['.png'] },
+              },
+            ],
+          });
+
+          const writableStream = await handle.createWritable();
+          const blob = await fetch(pngDataUrl).then((res) => res.blob());
+          await writableStream.write(blob);
+          await writableStream.close();
+
+          resolve();
+        };
+
+        img.onerror = (error) => {
+          reject(new Error('Failed to load the SVG image: ' + error.message));
+        };
+      } catch (error) {
+        console.error('Save failed:', error);
+        reject(error);
+      }
+    });
+  }
+
+  // Function to trigger the native file rename dialog
+  async renameDiagram(currentName: string): Promise<void> {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: currentName,
+        types: [
+          {
+            description: 'XML File',
+            accept: { 'application/vnd.jgraph.mxfile': ['.drawio'] },
+          },
+        ],
+      });
+
+      // Renaming in this context would involve saving the file with a new name
+      const writableStream = await handle.createWritable();
+      const fileData = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1">...</mxGraphModel>'; // Replace with actual file data
+      await writableStream.write(fileData);
+      await writableStream.close();
+
+      console.log('File renamed successfully');
+    } catch (error) {
+      console.error('Rename failed:', error);
+    }
+  }
+}
+
+
 .mat-row td,
 .mat-row th {
   border-bottom: none;
