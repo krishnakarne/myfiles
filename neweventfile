@@ -1,0 +1,137 @@
+<table mat-table [dataSource]="copilotData" class="mat-elevation-z8">
+
+  <!-- Date Column -->
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef> Date </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'day')">
+      {{element.day}}
+    </td>
+  </ng-container>
+
+  <!-- Total Suggestions Count Column -->
+  <ng-container matColumnDef="total_suggestions_count">
+    <th mat-header-cell *matHeaderCellDef> Total Suggestions Count </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'total_suggestions_count')">
+      {{element.total_suggestions_count}}
+    </td>
+  </ng-container>
+
+  <!-- Total Lines Accepted Column -->
+  <ng-container matColumnDef="total_lines_accepted">
+    <th mat-header-cell *matHeaderCellDef> Total Lines Accepted </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'total_lines_accepted')">
+      {{element.total_lines_accepted}}
+    </td>
+  </ng-container>
+
+  <!-- Total Acceptance Count Column -->
+  <ng-container matColumnDef="total_acceptances_count">
+    <th mat-header-cell *matHeaderCellDef> Total Acceptance Count </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'total_acceptances_count')">
+      {{element.total_acceptances_count}}
+    </td>
+  </ng-container>
+
+  <!-- Total Lines Suggested Column -->
+  <ng-container matColumnDef="total_lines_suggested">
+    <th mat-header-cell *matHeaderCellDef> Total Lines Suggested </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'total_lines_suggested')">
+      {{element.total_lines_suggested}}
+    </td>
+  </ng-container>
+
+  <!-- Total Active Users Column -->
+  <ng-container matColumnDef="total_active_users">
+    <th mat-header-cell *matHeaderCellDef> Total Active Users </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'total_active_users')">
+      {{element.total_active_users}}
+    </td>
+  </ng-container>
+
+  <!-- Language Column -->
+  <ng-container matColumnDef="language">
+    <th mat-header-cell *matHeaderCellDef> Language </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'language')">
+      {{element.language}}
+    </td>
+  </ng-container>
+
+  <!-- Editor Column -->
+  <ng-container matColumnDef="editor">
+    <th mat-header-cell *matHeaderCellDef> Editor </th>
+    <td mat-cell *matCellDef="let element; let i = index"
+        [attr.rowspan]="getRowSpan(i, 'editor')">
+      {{element.editor}}
+    </td>
+  </ng-container>
+
+  <!-- Table Header Row -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+  <!-- Table Data Rows -->
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+---------------------------
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-copilot-details',
+  templateUrl: './copilot-details.component.html',
+  styleUrls: ['./copilot-details.component.scss']
+})
+export class CopilotDetailsComponent implements OnInit {
+  copilotData = [
+    { day: '2024-07-18', total_suggestions_count: 1050, total_lines_accepted: 416, total_acceptances_count: 291, total_lines_suggested: 1924, total_active_users: 18, language: 'JavaScript', editor: 'VSCode' },
+    { day: '2024-07-18', total_suggestions_count: 1050, total_lines_accepted: 416, total_acceptances_count: 291, total_lines_suggested: 1924, total_active_users: 18, language: 'JavaScript', editor: 'VSCode' },
+    { day: '2024-07-19', total_suggestions_count: 1120, total_lines_accepted: 450, total_acceptances_count: 320, total_lines_suggested: 2000, total_active_users: 20, language: 'Python', editor: 'PyCharm' },
+    { day: '2024-07-19', total_suggestions_count: 1120, total_lines_accepted: 450, total_acceptances_count: 320, total_lines_suggested: 2000, total_active_users: 20, language: 'Python', editor: 'PyCharm' },
+    // Add more data as needed
+  ];
+
+  rowSpans = {};
+
+  ngOnInit(): void {
+    this.calculateRowSpans();
+  }
+
+  calculateRowSpans() {
+    const columnKeys = ['day', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'total_lines_suggested', 'total_active_users', 'language', 'editor'];
+    columnKeys.forEach(column => {
+      this.rowSpans[column] = this.calculateRowSpanForColumn(column);
+    });
+  }
+
+  calculateRowSpanForColumn(column: string): number[] {
+    const rowSpans = [];
+    let rowIndex = 0;
+
+    while (rowIndex < this.copilotData.length) {
+      let spanCount = 1;
+
+      while (rowIndex + spanCount < this.copilotData.length &&
+        this.copilotData[rowIndex][column] === this.copilotData[rowIndex + spanCount][column]) {
+        spanCount++;
+      }
+
+      for (let i = 0; i < spanCount; i++) {
+        rowSpans.push(i === 0 ? spanCount : 0); // First cell gets the span, others get 0
+      }
+
+      rowIndex += spanCount;
+    }
+
+    return rowSpans;
+  }
+
+  getRowSpan(index: number, column: string): number {
+    return this.rowSpans[column][index];
+  }
+}
