@@ -1,4 +1,43 @@
 calculateRowSpans(): void {
+  const columnKeys = [
+    'date',
+    'total_suggestions_count',
+    'total_lines_accepted',
+    'total_acceptance_count',
+    'total_lines_suggested',
+    'total_active_users',
+    'language',
+    'editor'
+  ];
+
+  columnKeys.forEach((column) => {
+    // Initialize each entry in rowSpans as an empty array
+    this.rowSpans[column] = [];
+
+    let currentSpan = 1;
+
+    for (let i = 1; i < this.copilotData.filteredData.length; i++) {
+      if (this.copilotData.filteredData[i][column] === this.copilotData.filteredData[i - 1][column]) {
+        currentSpan++;
+      } else {
+        this.rowSpans[column][i - currentSpan] = currentSpan;
+        for (let j = i - currentSpan + 1; j < i; j++) {
+          this.rowSpans[column][j] = 0;
+        }
+        currentSpan = 1;
+      }
+    }
+    this.rowSpans[column][this.copilotData.filteredData.length - currentSpan] = currentSpan;
+    for (let j = this.copilotData.filteredData.length - currentSpan + 1; j < this.copilotData.filteredData.length; j++) {
+      this.rowSpans[column][j] = 0;
+    }
+  });
+}
+
+
+
+
+calculateRowSpans(): void {
     const groupedData = this.groupBy(this.copilotData.filteredData, 'day');
 
     for (let key in groupedData) {
