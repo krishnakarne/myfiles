@@ -15,6 +15,10 @@ calculateRowSpans(): void {
     }
 }
 
+getRowSpan(index: number, column: string): number {
+  return this.rowSpans[column] ? this.rowSpans[column][index] : 1;
+}
+
 groupBy(array: any[], key: string): { [key: string]: any[] } {
     return array.reduce((result, currentValue) => {
         (result[currentValue[key]] = result[currentValue[key]] || []).push(currentValue);
