@@ -1,3 +1,67 @@
+
+export class CopilotDetailsComponent {
+  rowSpans: { [key: string]: number[] } = {};
+
+  ngOnInit() {
+    this.getRepoInfoData(); // Ensure data is fetched and processed before calculating row spans
+  }
+
+  calculateRowSpans(): void {
+    const columnKeys = ['date', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'language', 'editor'];
+
+    columnKeys.forEach(column => {
+      this.rowSpans[column] = []; // Initialize the array for each column
+      let currentSpan = 1;
+
+      for (let i = 1; i < this.copilotData.filteredData.length; i++) {
+        if (this.copilotData.filteredData[i][column] === this.copilotData.filteredData[i - 1][column]) {
+          currentSpan++;
+        } else {
+          this.rowSpans[column][i - currentSpan] = currentSpan;
+          for (let j = 1; j < currentSpan; j++) {
+            this.rowSpans[column][i - j] = 0;
+          }
+          currentSpan = 1;
+        }
+      }
+      this.rowSpans[column][this.copilotData.filteredData.length - currentSpan] = currentSpan;
+    });
+  }
+
+  getRowSpan(index: number, column: string): number {
+    return this.rowSpans[column] && this.rowSpans[column][index] ? this.rowSpans[column][index] : 1;
+  }
+
+  getRepoInfoData() {
+    this.http.get<any[]>(this.getCopilotUrl(), this.httpOptions).subscribe(response => {
+      this.copilotDetails = response;
+
+      this.copilotData = new MatTableDataSource<any>(response.flatMap((data: any) => {
+        return data.breakdown.map((breakdown: any) => {
+          return {
+            date: data.day,
+            total_suggestions_count: data.total_suggestions_count,
+            total_acceptances_count: data.total_acceptances_count,
+            total_lines_suggested: data.total_lines_suggested,
+            total_lines_accepted: data.total_lines_accepted,
+            total_active_users: data.total_active_users,
+            language: breakdown.language,
+            editor: breakdown.editor,
+          };
+        });
+      }));
+
+      this.filteredData = this.copilotData.filteredData; // Ensure filteredData is available
+      this.calculateRowSpans(); // Call the row span calculation after data is populated
+    });
+  }
+}
+
+
+
+
+
+--------------------------------------------------
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 
