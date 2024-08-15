@@ -1,3 +1,25 @@
+async renameDiagram(): Promise<void> {
+  try {
+    const fileData = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1">...</mxGraphModel>'; // Replace with actual file data
+
+    const blob = new Blob([fileData], { type: 'application/vnd.jgraph.mxfile' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'diagram.drawio'; // Default file name, you can prompt the user for input
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    window.URL.revokeObjectURL(url);
+    console.log('File saved successfully');
+  } catch (error) {
+    console.error('Rename failed:', error);
+  }
+}
+
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { GraphEditorIn, GraphXmlData } from 'some-graph-editor-library'; // Replace with actual import
