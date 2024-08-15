@@ -1,3 +1,53 @@
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+
+@Component({
+  selector: 'app-copilot-details',
+  templateUrl: './copilot-details.component.html',
+  styleUrls: ['./copilot-details.component.scss']
+})
+export class CopilotDetailsComponent implements OnInit {
+  displayedColumns: string[] = ['day', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'language', 'editor'];
+  dataSource: MatTableDataSource<any>;
+
+  copilotData = [
+    { day: '2024-07-18', total_suggestions_count: 1050, total_lines_accepted: 416, total_acceptances_count: 291, language: 'JavaScript', editor: 'VSCode' },
+    { day: '2024-07-18', total_suggestions_count: 1050, total_lines_accepted: 416, total_acceptances_count: 291, language: 'JavaScript', editor: 'VSCode' },
+    { day: '2024-07-18', total_suggestions_count: 1050, total_lines_accepted: 416, total_acceptances_count: 291, language: 'Shell', editor: 'VSCode' },
+    { day: '2024-07-19', total_suggestions_count: 1120, total_lines_accepted: 450, total_acceptances_count: 320, language: 'Python', editor: 'PyCharm' },
+    { day: '2024-07-19', total_suggestions_count: 1120, total_lines_accepted: 450, total_acceptances_count: 320, language: 'Python', editor: 'PyCharm' },
+    { day: '2024-07-19', total_suggestions_count: 1120, total_lines_accepted: 450, total_acceptances_count: 320, language: 'Go', editor: 'VSCode' },
+  ];
+
+  rowSpans = {};
+
+  ngOnInit(): void {
+    this.dataSource = new MatTableDataSource(this.copilotData);
+    this.calculateRowSpans();
+  }
+
+  calculateRowSpans(): void {
+    const columnKeys = ['day', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'language', 'editor'];
+    
+    columnKeys.forEach(column => {
+      this.rowSpans[column] = new Array(this.copilotData.length).fill(1);  // Initialize with 1 (default rowspan)
+
+      for (let i = 0; i < this.copilotData.length; i++) {
+        if (i > 0 && this.copilotData[i][column] === this.copilotData[i - 1][column]) {
+          this.rowSpans[column][i] = 0;  // Set rowspan to 0 for duplicate entries
+          this.rowSpans[column][i - 1] += 1;  // Increment the rowspan of the previous cell
+        }
+      }
+    });
+  }
+
+  getRowSpan(index: number, column: string): number {
+    return this.rowSpans[column][index];
+  }
+}
+
+
+
 calculateRowSpans() {
   const columnKeys = ['day', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'total_lines_suggested', 'total_active_users', 'language', 'editor'];
   columnKeys.forEach(column => {
