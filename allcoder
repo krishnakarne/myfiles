@@ -1,3 +1,49 @@
+groupBy(data: any[], keys: string[]) {
+  const grouped = data.reduce((acc, row) => {
+    const key = keys.map(k => row[k]).join('|');
+    if (!acc[key]) {
+      acc[key] = { children: [], rowspan: 0 };
+    }
+    acc[key].children.push(row);
+    acc[key].rowspan = acc[key].children.length;
+    return acc;
+  }, {});
+
+  // Flatten the grouped data and assign row spans
+  const flattenedData = Object.values(grouped).flatMap(group =>
+    group.children.map((child, index) => ({
+      ...child,
+      rowspan: index === 0 ? group.rowspan : 0
+    }))
+  );
+
+  return flattenedData;
+}
+
+ngOnInit() {
+  this.http.get<any[]>(this.getCopiloturl).subscribe((response: any) => {
+    this.copilotDetails = response;
+
+    // Flatten and group the data
+    this.groupedData = this.groupBy(
+      this.copilotData.filteredData, 
+      ['day', 'total_suggestions_count', 'total_acceptances_count', 'total_lines_suggested', 'total_lines_accepted', 'total_active_users']
+    );
+    
+    console.log("Grouped Data: ", this.groupedData);
+    
+    // Update the data source
+    this.copilotData.data = this.groupedData;
+    
+    // Calculate Row Spans (if necessary)
+    this.calculateRowSpans();
+  });
+}
+
+
+
+
+
 interface GroupedRow {
   day: string;
   total_suggestions_count: number;
