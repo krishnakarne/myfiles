@@ -1,0 +1,88 @@
+<div class="card-style">
+  <div class="card-header-style card-header-tabel-style" style="display: flex; justify-content: space-between;">
+    <h4 class="card-title-style">Copilot Details</h4>
+    <div class="download-icon" (click)="exportToExcel()" style="cursor: pointer;">
+      <svg [cIcon]="icons.cilCloudDownload" size="xl" title="List Icon"></svg>
+    </div>
+  </div>
+  <div class="card-body-style table-responsive-style" style="max-height: calc(100vh - 190px); overflow: auto;">
+    <table mat-table [dataSource]="copilotData" multiTemplateDataRows class="mat-elevation-z8" matSort>
+      
+      <!-- Date Column -->
+      <ng-container matColumnDef="day">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'day')"
+            [style.display]="getRowSpan(i, 'day') ? '' : 'none'">
+          {{ element.day }}
+        </td>
+      </ng-container>
+
+      <!-- Total Suggestions Count Column -->
+      <ng-container matColumnDef="total_suggestions_count">
+        <th mat-header-cell *matHeaderCellDef> Total Suggestions Count </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'total_suggestions_count')">
+          {{ element.total_suggestions_count }}
+        </td>
+      </ng-container>
+
+      <!-- Total Acceptances Count Column -->
+      <ng-container matColumnDef="total_acceptances_count">
+        <th mat-header-cell *matHeaderCellDef> Total Acceptances Count </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'total_acceptances_count')">
+          {{ element.total_acceptances_count }}
+        </td>
+      </ng-container>
+
+      <!-- Total Lines Suggested Column -->
+      <ng-container matColumnDef="total_lines_suggested">
+        <th mat-header-cell *matHeaderCellDef> Total Lines Suggested </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'total_lines_suggested')">
+          {{ element.total_lines_suggested }}
+        </td>
+      </ng-container>
+
+      <!-- Total Lines Accepted Column -->
+      <ng-container matColumnDef="total_lines_accepted">
+        <th mat-header-cell *matHeaderCellDef> Total Lines Accepted </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'total_lines_accepted')">
+          {{ element.total_lines_accepted }}
+        </td>
+      </ng-container>
+
+      <!-- Total Active Users Column -->
+      <ng-container matColumnDef="total_active_users">
+        <th mat-header-cell *matHeaderCellDef> Total Active Users </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'total_active_users')">
+          {{ element.total_active_users }}
+        </td>
+      </ng-container>
+
+      <!-- Language Column -->
+      <ng-container matColumnDef="language">
+        <th mat-header-cell *matHeaderCellDef> Language </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'language')">
+          {{ element.language }}
+        </td>
+      </ng-container>
+
+      <!-- Editor Column -->
+      <ng-container matColumnDef="editor">
+        <th mat-header-cell *matHeaderCellDef> Editor </th>
+        <td mat-cell *matCellDef="let element; let i = dataIndex" 
+            [attr.rowspan]="getRowSpan(i, 'editor')">
+          {{ element.editor }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+    </table>
+  </div>
+</div>
