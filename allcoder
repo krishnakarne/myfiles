@@ -1,37 +1,31 @@
 calculateRowSpans(): void {
-    const columnKeys = ['date', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'language', 'editor'];
+  const columnKeys = ['date', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptances_count', 'language', 'editor'];
 
-    // Initialize the rowSpans array for each column
-    columnKeys.forEach(column => {
-        this.rowSpans[column] = new Array(this.copilotData.filteredData.length).fill(1);
-    });
+  // Initialize rowSpans for each column
+  columnKeys.forEach(column => {
+    this.rowSpans[column] = new Array(this.copilotData.filteredData.length).fill(1);
+  });
 
-    // Calculate row spans for each column
-    columnKeys.forEach(column => {
-        let currentSpan = 1;
-
-        for (let i = 1; i < this.copilotData.filteredData.length; i++) {
-            if (this.copilotData.filteredData[i][column] === this.copilotData.filteredData[i - 1][column]) {
-                currentSpan++;
-                this.rowSpans[column][i] = 0; // Mark for hiding
-            } else {
-                this.rowSpans[column][i - currentSpan] = currentSpan; // Set the rowspan for the starting row
-                currentSpan = 1;
-            }
-        }
-        // Apply span for the last series of rows
-        this.rowSpans[column][this.copilotData.filteredData.length - currentSpan] = currentSpan;
-    });
-}
-
-getRowSpan(index: number, column: string): number {
-    // Ensure index is within bounds
-    if (index < 0 || index >= this.copilotData.filteredData.length) {
-        return 1;
+  // Calculate rowSpans for each column
+  columnKeys.forEach(column => {
+    let currentSpan = 1;
+    for (let i = 1; i < this.copilotData.filteredData.length; i++) {
+      if (this.copilotData.filteredData[i][column] === this.copilotData.filteredData[i - 1][column]) {
+        currentSpan++;
+        this.rowSpans[column][i] = 0;  // Set the rowspan of the current row to 0, it will be hidden
+      } else {
+        this.rowSpans[column][i - currentSpan] = currentSpan;  // Set the rowspan of the first row of the group
+        currentSpan = 1;
+      }
     }
-    // Return the rowspan or 1 if undefined
-    return this.rowSpans[column][index] || 1;
+    // Set the rowspan of the last group
+    this.rowSpans[column][this.copilotData.filteredData.length - currentSpan] = currentSpan;
+  });
 }
+getRowSpan(index: number, column: string): number {
+  return (this.rowSpans[column] && this.rowSpans[column][index] !== undefined) ? this.rowSpans[column][index] : 1;
+}
+
 
 export class CopilotDetailsComponent {
   rowSpans: { [key: string]: number[] } = {};
