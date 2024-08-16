@@ -1,25 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgxSpinnerService } from "ngx-spinner";
+import { GitRepositoriesService } from '../services/git-repositories.service';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-teams-table-data',
   templateUrl: './teams-table-data.component.html',
-  styleUrls: ['./teams-table-data.component.css']
+  styleUrls: ['./teams-table-data.component.scss']
 })
 export class TeamsTableDataComponent implements OnInit {
 
+  // Existing properties
   combinedData: any[] = [];
+  branchSource: MatTableDataSource<any>;
+  originalData: any;
 
   constructor(
+    private cd: ChangeDetectorRef,
     private http: HttpClient,
-    private spinner: NgxSpinnerService
-  ) { }
+    private spinner: NgxSpinnerService,
+    private service: GitRepositoriesService
+  ) {}
 
   ngOnInit(): void {
-    this.spinner.show();
+    this.spinner.show(); // Start the spinner
     this.service.getTeams(this.http).subscribe((res: any) => {
-      this.combinedData = this.branchSource.filteredData; // Assuming this.branchSource.filteredData contains the data you want to loop through
+      this.originalData = res;
+      this.branchSource = new MatTableDataSource<any>(this.originalData);
 
       const headers = new HttpHeaders({
         'X-API-Key': `${environment.ACCESS_TOKEN}`
@@ -29,27 +37,26 @@ export class TeamsTableDataComponent implements OnInit {
         headers: headers
       };
 
-      // Create an array of Promises for each team in the combinedData array
-      const fetchPromises = this.combinedData.map((item: any) => {
+      // Use a map to store promises for all the fetches
+      const fetchPromises = this.branchSource.filteredData.map((item: any) => {
         const teamsUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchmembers?teamName=${item.name}`;
-        
         return this.http.get(teamsUrl, httpOptions).toPromise().then(response => {
-          item.memberDetails = response;  // Now item is correctly defined as the current team object in the loop
+          item.memberDetails = response;
         }).catch(error => {
-          console.error('Error fetching repo details:', error);
+          console.error('Error fetching member details:', error);
         });
       });
 
-      // Wait for all the fetch operations to complete
+      // Wait for all fetches to complete
       Promise.all(fetchPromises).then(() => {
-        this.spinner.hide(); // Hide spinner once all fetches are done
+        this.spinner.hide(); // Hide the spinner when all operations are complete
       }).catch(() => {
-        this.spinner.hide(); // Ensure spinner is hidden if there's an error
+        this.spinner.hide(); // Hide the spinner even if there's an error
       });
 
     }, error => {
       console.error('Error fetching teams:', error);
-      this.spinner.hide(); // Hide spinner in case of error
+      this.spinner.hide(); // Hide spinner in case of error fetching teams
     });
   }
 }
