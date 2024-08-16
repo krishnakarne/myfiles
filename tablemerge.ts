@@ -1,3 +1,39 @@
+getRowSpan(index: number, key: string): number | null {
+  // Ensure that the function works with the data on the current page only
+  const visibleData = this.paginator ? this.visibleData() : this.copilotData;
+
+  if (index === 0 || visibleData[index][key] !== visibleData[index - 1][key]) {
+    let span = 1;
+    for (let i = index + 1; i < visibleData.length; i++) {
+      if (visibleData[index][key] === visibleData[i][key]) {
+        span++;
+      } else {
+        break;
+      }
+    }
+    return span;
+  }
+  return null; // Return null for subsequent rows in a group
+}
+
+visibleData(): any[] {
+  const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+  const endIndex = startIndex + this.paginator.pageSize;
+  return this.copilotData.slice(startIndex, endIndex);
+}
+
+@ViewChild(MatPaginator) paginator: MatPaginator;
+
+ngAfterViewInit() {
+  this.paginator.page.subscribe(() => {
+    // Trigger change detection or any other logic needed to refresh the table
+    this.table.renderRows(); // Re-render the table to apply row spans correctly
+  });
+}
+
+
+
+
 [style.display]="getRowSpan(i, 'language') ? '' : 'none'">
 
 getRowSpan(index: number, key: string): number | null {
