@@ -1,3 +1,42 @@
+groupBy(array: any[], key: string): { [key: string]: any[] } {
+    const groupedResult = array.reduce((result, currentValue) => {
+        (result[currentValue[key]] = result[currentValue[key]] || []).push(currentValue);
+        return result;
+    }, {});
+
+    console.log('Grouped Data:', groupedResult); // Log the grouped data
+    return groupedResult;
+}
+calculateRowSpans(): void {
+    this.rowSpans = {};  // Reset rowSpans
+
+    const columns = ['day', 'total_suggestions_count', 'total_acceptances_count', 'total_lines_suggested', 'total_lines_accepted', 'total_active_users'];
+    columns.forEach(column => {
+        this.rowSpans[column] = [];
+    });
+
+    const groupedData = this.groupBy(this.copilotData.filteredData, 'day');
+
+    let currentIndex = 0;
+    for (let key in groupedData) {
+        const group = groupedData[key];
+        const groupLength = group.length;
+
+        // Set the rowspan for the first occurrence in the group
+        columns.forEach(column => {
+            this.rowSpans[column][currentIndex] = groupLength;
+            for (let i = 1; i < groupLength; i++) {
+                this.rowSpans[column][currentIndex + i] = 0;  // Set 0 for subsequent rows in the group
+            }
+        });
+
+        currentIndex += groupLength;
+    }
+
+    console.log('Row spans after calculation:', this.rowSpans);  // Log the row spans for debugging
+}
+
+
 calculateRowSpans(): void {
     this.rowSpans = {};  // Reset rowSpans
 
