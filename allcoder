@@ -15,6 +15,64 @@ export class TeamsTableDataComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.spinner.show();
+    this.service.getTeams(this.http).subscribe((res: any) => {
+      this.combinedData = this.branchSource.filteredData;
+      const teamNames = this.combinedData.map((item: any) => item.name);
+
+      const headers = new HttpHeaders({
+        'X-API-Key': `${environment.ACCESS_TOKEN}`
+      });
+
+      const httpOptions = {
+        headers: headers
+      };
+
+      const fetchPromises = teamNames.map(teamName => {
+        const teamsUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchmembers?teamName=${teamName}`;
+        return this.http.get(teamsUrl, httpOptions).toPromise().then(response => {
+          const branchDataResponse = response;
+          item.memberDetails = branchDataResponse;
+          // Optionally, you can process the response here if needed
+        }).catch(error => {
+          console.error('Error fetching repo details:', error);
+        });
+      });
+
+      // Wait for all the fetch operations to complete
+      Promise.all(fetchPromises).then(() => {
+        this.spinner.hide(); // Hide spinner once all fetches are done
+      });
+    }, error => {
+      console.error('Error fetching teams:', error);
+      this.spinner.hide(); // Hide spinner in case of error
+    });
+  }
+}
+
+
+
+
+
+
+----------------------------------------------------
+import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { NgxSpinnerService } from "ngx-spinner";
+
+@Component({
+  selector: 'app-teams-table-data',
+  templateUrl: './teams-table-data.component.html',
+  styleUrls: ['./teams-table-data.component.css']
+})
+export class TeamsTableDataComponent implements OnInit {
+
+  constructor(
+    private http: HttpClient,
+    private spinner: NgxSpinnerService
+  ) { }
+
+  ngOnInit(): void {
     this.fetchAllTeamMembers();
   }
 
