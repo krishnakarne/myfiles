@@ -1,4 +1,21 @@
-ngAfterViewInit() {
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+
+@Component({
+  selector: 'app-copilot-table',
+  templateUrl: './copilot-table.component.html',
+  styleUrls: ['./copilot-table.component.css']
+})
+export class CopilotTableComponent implements AfterViewInit {
+  displayedColumns: string[] = ['date', 'total_suggestions_count', 'total_lines_accepted', 'total_acceptance_count', 'total_lines_suggested', 'total_active_users', 'language', 'editor'];
+  dataSource = new MatTableDataSource<any>([
+    // Your data here
+  ]);
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
 
     this.paginator.page.subscribe(() => {
@@ -6,39 +23,46 @@ ngAfterViewInit() {
     });
   }
 
-
-getRowSpan(index: number, key: string): number | null {
-  // Ensure that the function works with the data on the current page only
-  const visibleData = this.paginator ? this.visibleData() : this.copilotData;
-
-  if (index === 0 || visibleData[index][key] !== visibleData[index - 1][key]) {
-    let span = 1;
-    for (let i = index + 1; i < visibleData.length; i++) {
-      if (visibleData[index][key] === visibleData[i][key]) {
-        span++;
-      } else {
-        break;
-      }
-    }
-    return span;
+  // Function to calculate visible data based on the current page
+  visibleData(): any[] {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    return this.dataSource.data.slice(startIndex, endIndex);
   }
-  return null; // Return null for subsequent rows in a group
+
+  // Function to recalculate row spans for visible data
+  recalculateRowSpans(): void {
+    const visibleData = this.visibleData();
+    for (let i = 0; i < visibleData.length; i++) {
+      this.getRowSpan(i, 'date');
+      this.getRowSpan(i, 'total_suggestions_count');
+      this.getRowSpan(i, 'total_lines_accepted');
+      this.getRowSpan(i, 'total_acceptance_count');
+      this.getRowSpan(i, 'total_lines_suggested');
+      this.getRowSpan(i, 'total_active_users');
+    }
+  }
+
+  // Function to calculate rowspan for each column
+  getRowSpan(index: number, key: string): number | null {
+    const visibleData = this.visibleData();
+
+    if (index === 0 || visibleData[index][key] !== visibleData[index - 1][key]) {
+      let span = 1;
+      for (let i = index + 1; i < visibleData.length; i++) {
+        if (visibleData[index][key] === visibleData[i][key]) {
+          span++;
+        } else {
+          break;
+        }
+      }
+      visibleData[index][`${key}_rowspan`] = span;
+      return span;
+    }
+    return null; // Return null for subsequent rows in a group
+  }
 }
 
-visibleData(): any[] {
-  const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-  const endIndex = startIndex + this.paginator.pageSize;
-  return this.copilotData.slice(startIndex, endIndex);
-}
-
-@ViewChild(MatPaginator) paginator: MatPaginator;
-
-ngAfterViewInit() {
-  this.paginator.page.subscribe(() => {
-    // Trigger change detection or any other logic needed to refresh the table
-    this.table.renderRows(); // Re-render the table to apply row spans correctly
-  });
-}
 
 
 
