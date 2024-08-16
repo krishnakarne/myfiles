@@ -1,30 +1,14 @@
-calculateRowSpans(): void {
-  const groupedData = this.groupBy(this.copilotData.filteredData, 'day');
-
-  const columnKeys = [
-    'date',
-    'total_suggestions_count',
-    'total_lines_accepted',
-    'total_acceptance_count',
-    'total_lines_suggested',
-    'total_active_users',
-    'language',
-    'editor'
-  ];
-
-  columnKeys.forEach((column) => {
-    this.rowSpans[column] = [];
-    
-    for (let key in groupedData) {
-      const group = groupedData[key];
-      group.forEach((row, index) => {
-        this.rowSpans[column][this.copilotData.filteredData.indexOf(row)] = index === 0 ? group.length : 0;
-      });
+  getRowSpan(index: number, key: string): number {
+    let span = 1;
+    for (let i = index + 1; i < this.copilotData.length; i++) {
+      if (this.copilotData[index][key] === this.copilotData[i][key]) {
+        span++;
+      } else {
+        break;
+      }
     }
-  });
-
-  console.log('Row spans:', this.rowSpans);
-}
+    return span;
+  }
 
 
 
