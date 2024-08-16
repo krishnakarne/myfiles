@@ -13,6 +13,50 @@ toggleRow(element: any, index: number) {
     headers: headers
   };
 
+  // Fetch branch details
+  this.http.get(branchDetailsUrl, httpOptions).subscribe((response: any) => {
+    console.log('branch details url response:', response);
+    this.branchDetails = new MatTableDataSource(response);
+    this.cd.detectChanges();
+
+    const paginator = this.paginatorbranch.toArray()[index];
+    this.branchDetails.paginator = paginator;
+    this.branchDetails.sort = this.innerSort;
+  }, error => {
+    console.error('Error fetching repository branch details:', error);
+  });
+
+  // Fetch team details
+  this.http.get(teamDetailsUrl, httpOptions).subscribe((response: any) => {
+    console.log('team details url response:', response);
+    this.teamDetails = new MatTableDataSource(response);
+    this.cd.detectChanges();
+
+    const paginator = this.paginatorteams.toArray()[index];
+    this.teamDetails.paginator = paginator;
+    this.teamDetails.sort = this.innerSort;
+  }, error => {
+    console.error('Error fetching repository team details:', error);
+  });
+}
+
+
+
+toggleRow(element: any, index: number) {
+  const name = element.name;
+
+  // Use the service to get the URLs
+  const branchDetailsUrl = this.service.getBranchDetailsUrl(this.http, name);
+  const teamDetailsUrl = this.service.getTeamDetailsUrl(this.http, name);
+
+  const headers = new HttpHeaders({
+    'X-API-Key': `${environment.ACCESS_TOKEN}`
+  });
+
+  const httpOptions = {
+    headers: headers
+  };
+
   this.spinner.show(); // Show spinner
 
   // Fetch branch details
