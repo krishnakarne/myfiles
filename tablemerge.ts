@@ -1,4 +1,6 @@
-  getRowSpan(index: number, key: string): number {
+getRowSpan(index: number, key: string): number | null {
+  // Check if the previous row has the same value
+  if (index === 0 || this.copilotData[index][key] !== this.copilotData[index - 1][key]) {
     let span = 1;
     for (let i = index + 1; i < this.copilotData.length; i++) {
       if (this.copilotData[index][key] === this.copilotData[i][key]) {
@@ -9,8 +11,8 @@
     }
     return span;
   }
-
-
+  return null;
+}
 
 
 
