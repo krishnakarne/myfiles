@@ -1,123 +1,52 @@
-
 ngOnInit(): void {
-  this.spinner.show(); // Start spinner
+  // Show the spinner at the start
+  this.spinner.show();
 
-  this.service.getRepoFromDatabase(this.http).subscribe(async (item: any) => {
-    const data = item.filter((repo: any) => repo.name.startsWith('sdop-') || repo.topics.includes('sdop-devops') || repo.topics.includes('sdop-group'));
+  // Fetch the main data from the service
+  this.service.getRepoFromDatabase(this.http).subscribe((items: any[]) => {
+    const data = items.filter(repo => 
+      repo.name.startsWith('sdop-') || 
+      repo.topics.includes('sdop-devops') || 
+      repo.topics.includes('sdop-group')
+    );
     this.originalData = data;
     this.branchSource = new MatTableDataSource<any>(this.originalData);
-    this.branchSource.paginator = this.paginator;
-    this.combinedData = this.branchSource.filteredData;
+    this.branchSource.sort = this.sort;
+    this.branchSource.paginator = this.batchPaginator;
 
-    const headers = new HttpHeaders({
-      'X-API-Key': `${environment.ACCESS_TOKEN}`
+    // Prepare an array of observables for all HTTP requests using the service
+    const allRequests = this.originalData.map((item) => {
+      const teamDetailsRequest = this.service.getTeamPermissions(item.name); // Service method to fetch team details
+      const branchDetailsRequest = this.service.getBranchDetails(item.name); // Service method to fetch branch details
+
+      // Perform both HTTP calls and merge their results
+      return forkJoin({
+        teamDetails: teamDetailsRequest,
+        branchDetails: branchDetailsRequest
+      }).pipe(
+        tap((result: any) => {
+          const teamData = result.teamDetails;
+          item.teamDetails = teamData;
+          item.teamName = teamData.map((team: any) => team.name).join(', ');
+
+          const branchData = result.branchDetails;
+          item.branchDetails = branchData;
+          item.branchNames = branchData.map((branch: any) => branch.name).join(', ');
+        })
+      );
     });
 
-    const fetchDetails = await Promise.all(this.combinedData.map(async (item: any) => {
-      const teamDetailsUrl = await this.service.getTeamDetailsUrl(this.http, item.name).toPromise();
-      const branchDetailsUrl = await this.service.getBranchDetailsUrl(this.http, item.name).toPromise();
-
-      const teamDetailsRequest = this.http.get(teamDetailsUrl, { headers }).toPromise().then((teamData: any) => {
-        item.teamDetails = teamData.map((team: any) => team.name).join(', ');
-      });
-
-      const branchDetailsRequest = this.http.get(branchDetailsUrl, { headers }).toPromise().then((branchData: any) => {
-        item.branchDetails = branchData.map((branch: any) => branch.name).join(', ');
-      });
-
-      return Promise.all([teamDetailsRequest, branchDetailsRequest]);
-    }));
-
-    // Handle after all requests are finished
-    this.cd.detectChanges(); // Update the view
-    this.spinner.hide(); // Hide the spinner after all requests complete
-  }, error => {
-    console.error('Error fetching repositories:', error);
-    this.spinner.hide(); // Hide spinner in case of error fetching repositories
+    // Execute all requests and only hide the spinner when they are all complete
+    forkJoin(allRequests).subscribe(
+      () => {
+        this.spinner.hide(); // Hide the spinner after all operations are complete
+        this.cd.detectChanges(); // Trigger change detection to update the view
+        console.log('All data fetched successfully');
+      },
+      (error) => {
+        this.spinner.hide(); // Hide the spinner in case of any error
+        console.error('Error fetching data:', error);
+      }
+    );
   });
-}
-
-
-
-
-
-
-
-
-
-
-
-
----------------------------------------------------------------------------------------
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { GitRepositoriesService } from '../services/git-repositories.service';
-import { environment } from 'src/environment/environment';
-import { forkJoin } from 'rxjs';
-
-@Component({
-  selector: 'app-devops-team-component',
-  templateUrl: './devops-team.component.html',
-  styleUrls: ['./devops-team.component.scss']
-})
-export class DevopsTeamComponent implements OnInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  panelOpenState = true;
-  combinedData: any[] = [];
-  branchSource: MatTableDataSource<any>;
-  originalData: any;
-
-  constructor(
-    private cd: ChangeDetectorRef,
-    private http: HttpClient,
-    private spinner: NgxSpinnerService,
-    private service: GitRepositoriesService
-  ) {}
-
-  ngOnInit(): void {
-    this.spinner.show(); // Start spinner
-
-    this.service.getRepoFromDatabase(this.http).subscribe((item: any) => {
-      const data = item.filter((repo: any) => repo.name.startsWith('sdop-') || repo.topics.includes('sdop-devops') || repo.topics.includes('sdop-group'));
-      this.originalData = data;
-      this.branchSource = new MatTableDataSource<any>(this.originalData);
-      this.branchSource.paginator = this.paginator;
-      this.combinedData = this.branchSource.filteredData;
-
-      const headers = new HttpHeaders({
-        'X-API-Key': `${environment.ACCESS_TOKEN}`
-      });
-
-      const fetchDetails = this.combinedData.map((item: any) => {
-        const teamDetailsUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchrepoteampermissions?reponame=${item.name}`;
-        const branchDetailsUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchbranches?reponame=${item.name}`;
-
-        const teamDetailsRequest = this.http.get(teamDetailsUrl, { headers }).toPromise().then((teamData: any) => {
-          item.teamDetails = teamData.map((team: any) => team.name).join(', ');
-        });
-
-        const branchDetailsRequest = this.http.get(branchDetailsUrl, { headers }).toPromise().then((branchData: any) => {
-          item.branchDetails = branchData.map((branch: any) => branch.name).join(', ');
-        });
-
-        return Promise.all([teamDetailsRequest, branchDetailsRequest]);
-      });
-
-      // Wait for all requests to finish
-      Promise.all(fetchDetails).then(() => {
-        this.cd.detectChanges(); // Update the view
-        this.spinner.hide(); // Hide the spinner after all requests complete
-      }).catch(error => {
-        console.error('Error fetching details:', error);
-        this.spinner.hide(); // Hide the spinner in case of error
-      });
-    }, error => {
-      console.error('Error fetching repositories:', error);
-      this.spinner.hide(); // Hide spinner in case of error fetching repositories
-    });
-  }
 }
