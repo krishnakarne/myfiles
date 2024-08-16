@@ -1,27 +1,26 @@
 calculateRowSpans(): void {
     this.rowSpans = {};  // Reset rowSpans
 
-    const groupedData = this.groupBy(this.copilotData.filteredData, 'day');
-
-    // Initialize rowSpans arrays for each column
     const columns = ['day', 'total_suggestions_count', 'total_acceptances_count', 'total_lines_suggested', 'total_lines_accepted', 'total_active_users'];
     columns.forEach(column => {
         this.rowSpans[column] = [];
     });
 
+    const groupedData = this.groupBy(this.copilotData.filteredData, 'day');
+
+    let currentIndex = 0;
     for (let key in groupedData) {
-        let group = groupedData[key];
+        const group = groupedData[key];
+        const groupLength = group.length;
 
-        group.forEach((row, index) => {
-            const rowIndex = this.copilotData.filteredData.indexOf(row);
-
-            this.rowSpans['day'][rowIndex] = index === 0 ? group.length : 0;
-            this.rowSpans['total_suggestions_count'][rowIndex] = index === 0 ? group.length : 0;
-            this.rowSpans['total_acceptances_count'][rowIndex] = index === 0 ? group.length : 0;
-            this.rowSpans['total_lines_suggested'][rowIndex] = index === 0 ? group.length : 0;
-            this.rowSpans['total_lines_accepted'][rowIndex] = index === 0 ? group.length : 0;
-            this.rowSpans['total_active_users'][rowIndex] = index === 0 ? group.length : 0;
+        columns.forEach(column => {
+            this.rowSpans[column][currentIndex] = groupLength;
+            for (let i = 1; i < groupLength; i++) {
+                this.rowSpans[column][currentIndex + i] = 0;
+            }
         });
+
+        currentIndex += groupLength;
     }
 
     console.log('Row spans:', this.rowSpans);  // Log the row spans for debugging
