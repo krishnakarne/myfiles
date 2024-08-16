@@ -1,3 +1,12 @@
+ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+
+    this.paginator.page.subscribe(() => {
+      this.recalculateRowSpans(); // Recalculate row spans when the page changes
+    });
+  }
+
+
 getRowSpan(index: number, key: string): number | null {
   // Ensure that the function works with the data on the current page only
   const visibleData = this.paginator ? this.visibleData() : this.copilotData;
