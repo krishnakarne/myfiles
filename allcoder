@@ -1,3 +1,55 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { NgxSpinnerService } from "ngx-spinner";
+
+@Component({
+  selector: 'app-teams-table-data',
+  templateUrl: './teams-table-data.component.html',
+  styleUrls: ['./teams-table-data.component.css']
+})
+export class TeamsTableDataComponent implements OnInit {
+
+  constructor(
+    private http: HttpClient,
+    private spinner: NgxSpinnerService
+  ) { }
+
+  ngOnInit(): void {
+    this.fetchAllTeamMembers();
+  }
+
+  fetchAllTeamMembers(): void {
+    this.spinner.show();
+
+    const teamNames = this.originalData.map(team => team.name);  // Assuming this.originalData contains the team names
+    const headers = new HttpHeaders({
+      'X-API-Key': `${environment.ACCESS_TOKEN}`
+    });
+
+    const fetchPromises = teamNames.map(teamName => {
+      const teamUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchmembers?teamName=${teamName}`;
+      return this.http.get(teamUrl, { headers }).toPromise();
+    });
+
+    Promise.all(fetchPromises).then(responses => {
+      // Handle the responses here
+      responses.forEach(response => {
+        // Process each response if needed
+        console.log(response);
+      });
+
+      // After all the responses are processed, hide the spinner
+      this.spinner.hide();
+    }).catch(error => {
+      // Handle error here
+      console.error('Error fetching team members:', error);
+      this.spinner.hide();
+    });
+  }
+}
+
+
+
 calculateRowSpans(): void {
     this.rowSpans = {};  // Reset rowSpans
 
