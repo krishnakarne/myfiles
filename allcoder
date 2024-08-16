@@ -1,3 +1,71 @@
+
+ngOnInit(): void {
+  // Show the spinner at the start
+  this.spinner.show();
+
+  // Fetch data from the service
+  this.service.getRepoFromDatabase(this.http).subscribe((item: any) => {
+    const data = item.filter(repo => 
+      repo.name.startsWith('sdop-') || 
+      repo.topics.includes('sdop-devops') || 
+      repo.topics.includes('sdop-group')
+    );
+    this.originalData = data;
+    this.branchSource = new MatTableDataSource<any>(this.originalData);
+    this.branchSource.sort = this.sort;
+    this.branchSource.paginator = this.batchPaginator;
+    this.combinedData = this.branchSource.filteredData;
+    
+    // Set up for all additional async requests
+    const requests = this.combinedData.map((item) => {
+      const teamDetailUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mxi.paas.cloudcenter.corp/api/fetchrepoteampermissions?reponame=${item.name}`;
+      const branchDetailUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mxi.paas.cloudcenter.corp/api/fetchbranches?reponame=${item.name}`;
+
+      const headers = new HttpHeaders({
+        'X-API-Key': `${environment.ACCESS_TOKEN}`,
+      });
+
+      const httpOptions = {
+        headers: headers,
+      };
+
+      // Fetch team details
+      return this.http.get(teamDetailUrl, httpOptions).pipe(
+        tap((response: any) => {
+          const teamdata = response;
+          item.teamDetails = teamdata;
+          item.teamName = teamdata.map((team: any) => team.name).join(', ');
+        }),
+        // Fetch branch details after team details
+        switchMap(() => this.http.get(branchDetailUrl, httpOptions).pipe(
+          tap((branchResponse: any) => {
+            const branchData = branchResponse;
+            item.branchDetails = branchData;
+            item.branchNames = branchData.map((branch: any) => branch.name).join(', ');
+          })
+        ))
+      );
+    });
+
+    // Execute all requests in parallel and hide the spinner when done
+    forkJoin(requests).subscribe(
+      () => {
+        this.spinner.hide(); // Hide the spinner after all operations are complete
+        console.log('All data fetched successfully');
+      },
+      (error) => {
+        this.spinner.hide(); // Hide the spinner in case of any error
+        console.error('Error fetching data:', error);
+      }
+    );
+  });
+}
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
