@@ -1,3 +1,5 @@
+[style.display]="getRowSpan(i, 'language') ? '' : 'none'">
+
 getRowSpan(index: number, key: string): number | null {
   if (key === 'date') {
     // Calculate row span for the 'date' column
