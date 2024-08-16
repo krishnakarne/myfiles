@@ -11,7 +11,10 @@ toggleRow(element: any, index: number) {
 
   // Fetch branch details URL from service and then make the HTTP request
   this.service.getBranchDetailsUrl(this.http, name).pipe(
-    mergeMap((branchDetailsUrl: string) => this.http.get(branchDetailsUrl, httpOptions))
+    mergeMap((branchDetailsUrl: string) => {
+      console.log('Branch Details URL:', branchDetailsUrl); // Debugging URL
+      return this.http.get(branchDetailsUrl, httpOptions);
+    })
   ).subscribe((response: any) => {
     console.log('branch details url response:', response);
     this.branchDetails = new MatTableDataSource(response);
@@ -26,15 +29,18 @@ toggleRow(element: any, index: number) {
 
   // Fetch team details URL from service and then make the HTTP request
   this.service.getTeamDetailsUrl(this.http, name).pipe(
-    mergeMap((teamDetailsUrl: string) => this.http.get(teamDetailsUrl, httpOptions))
+    mergeMap((teamDetailsUrl: string) => {
+      console.log('Team Details URL:', teamDetailsUrl); // Debugging URL
+      return this.http.get(teamDetailsUrl, httpOptions);
+    })
   ).subscribe((response: any) => {
     console.log('team details url response:', response);
-    this.teamDetails = new MatTableDataSource(response);
+    this.itemDetails = new MatTableDataSource(response); // Use the appropriate property here
     this.cd.detectChanges();
 
     const paginator = this.paginatorteams.toArray()[index];
-    this.teamDetails.paginator = paginator;
-    this.teamDetails.sort = this.innerSort;
+    this.itemDetails.paginator = paginator;
+    this.itemDetails.sort = this.innerSort;
   }, error => {
     console.error('Error fetching repository team details:', error);
   });
