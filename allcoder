@@ -1,52 +1,53 @@
-ngOnInit(): void {
-  // Show the spinner at the start
-  this.spinner.show();
+toggleRow(element: any, index: number) {
+  const name = element.name;
 
-  // Fetch the main data from the service
-  this.service.getRepoFromDatabase(this.http).subscribe((items: any[]) => {
-    const data = items.filter(repo => 
-      repo.name.startsWith('sdop-') || 
-      repo.topics.includes('sdop-devops') || 
-      repo.topics.includes('sdop-group')
-    );
-    this.originalData = data;
-    this.branchSource = new MatTableDataSource<any>(this.originalData);
-    this.branchSource.sort = this.sort;
-    this.branchSource.paginator = this.batchPaginator;
+  // Use the service to get the URLs
+  const branchDetailsUrl = this.service.getBranchDetailsUrl(this.http, name);
+  const teamDetailsUrl = this.service.getTeamDetailsUrl(this.http, name);
 
-    // Prepare an array of observables for all HTTP requests using the service
-    const allRequests = this.originalData.map((item) => {
-      const teamDetailsRequest = this.service.getTeamPermissions(item.name); // Service method to fetch team details
-      const branchDetailsRequest = this.service.getBranchDetails(item.name); // Service method to fetch branch details
+  const headers = new HttpHeaders({
+    'X-API-Key': `${environment.ACCESS_TOKEN}`
+  });
 
-      // Perform both HTTP calls and merge their results
-      return forkJoin({
-        teamDetails: teamDetailsRequest,
-        branchDetails: branchDetailsRequest
-      }).pipe(
-        tap((result: any) => {
-          const teamData = result.teamDetails;
-          item.teamDetails = teamData;
-          item.teamName = teamData.map((team: any) => team.name).join(', ');
+  const httpOptions = {
+    headers: headers
+  };
 
-          const branchData = result.branchDetails;
-          item.branchDetails = branchData;
-          item.branchNames = branchData.map((branch: any) => branch.name).join(', ');
-        })
-      );
-    });
+  this.spinner.show(); // Show spinner
 
-    // Execute all requests and only hide the spinner when they are all complete
-    forkJoin(allRequests).subscribe(
-      () => {
-        this.spinner.hide(); // Hide the spinner after all operations are complete
-        this.cd.detectChanges(); // Trigger change detection to update the view
-        console.log('All data fetched successfully');
-      },
-      (error) => {
-        this.spinner.hide(); // Hide the spinner in case of any error
-        console.error('Error fetching data:', error);
-      }
-    );
+  // Fetch branch details
+  this.http.get(branchDetailsUrl, httpOptions).subscribe({
+    next: (response: any) => {
+      console.log('branch details url response:', response);
+      this.branchDetails = new MatTableDataSource(response);
+      this.cd.detectChanges();
+
+      const paginator = this.paginatorbranch.toArray()[index];
+      this.branchDetails.paginator = paginator;
+      this.branchDetails.sort = this.innerSort;
+    },
+    error: (error) => {
+      console.error('Error fetching repository branch details:', error);
+      this.spinner.hide(); // Hide spinner in case of error
+    }
+  });
+
+  // Fetch team details
+  this.http.get(teamDetailsUrl, httpOptions).subscribe({
+    next: (response: any) => {
+      console.log('team details url response:', response);
+      this.teamDetails = new MatTableDataSource(response);
+      this.cd.detectChanges();
+
+      const paginator = this.paginatorteams.toArray()[index];
+      this.teamDetails.paginator = paginator;
+      this.teamDetails.sort = this.innerSort;
+
+      this.spinner.hide(); // Hide spinner after the team details are fetched
+    },
+    error: (error) => {
+      console.error('Error fetching repository team details:', error);
+      this.spinner.hide(); // Hide spinner in case of error
+    }
   });
 }
