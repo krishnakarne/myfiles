@@ -1,17 +1,21 @@
 getRowSpan(index: number, key: string): number | null {
-  // Check if the previous row has the same value
-  if (index === 0 || this.copilotData[index][key] !== this.copilotData[index - 1][key]) {
-    let span = 1;
-    for (let i = index + 1; i < this.copilotData.length; i++) {
-      if (this.copilotData[index][key] === this.copilotData[i][key]) {
-        span++;
-      } else {
-        break;
+  if (key === 'date') {
+    // Calculate row span for the 'date' column
+    if (index === 0 || this.copilotData[index][key] !== this.copilotData[index - 1][key]) {
+      let span = 1;
+      for (let i = index + 1; i < this.copilotData.length; i++) {
+        if (this.copilotData[index][key] === this.copilotData[i][key]) {
+          span++;
+        } else {
+          break;
+        }
       }
+      return span;
     }
-    return span;
+    return null;
   }
-  return null;
+  // Return null for the Language and Editor columns (no row span needed)
+  return 1;
 }
 
 
