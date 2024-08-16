@@ -1,3 +1,42 @@
+
+ngOnInit(): void {
+    this.spinner.show(); // Show the spinner at the start
+
+    // Fetch teams data
+    this.service.getTeams(this.http).subscribe((res: any) => {
+      this.originalData = res;
+      this.branchSource = new MatTableDataSource<any>(this.originalData);
+
+      const headers = new HttpHeaders({
+        'X-API-Key': `${environment.ACCESS_TOKEN}`
+      });
+
+      const fetchMemberDetails = this.branchSource.filteredData.map((item: any) => {
+        const teamsUrl = `https://devsecops-github-control-center-backend.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/api/fetchmembers?teamName=${item.name}`;
+        return this.http.get(teamsUrl, { headers }).pipe(
+          tap((response: any) => {
+            item.memberDetails = response;
+          })
+        );
+      });
+
+      // Process all fetches concurrently
+      forkJoin(fetchMemberDetails).subscribe(() => {
+        this.spinner.hide(); // Hide the spinner once all operations are complete
+      }, error => {
+        console.error('Error fetching team member details:', error);
+        this.spinner.hide(); // Ensure the spinner is hidden if there's an error
+      });
+
+    }, error => {
+      console.error('Error fetching teams:', error);
+      this.spinner.hide(); // Hide spinner in case of error
+    });
+  }
+
+
+-----------------
+
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgxSpinnerService } from "ngx-spinner";
