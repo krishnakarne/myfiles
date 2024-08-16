@@ -1,3 +1,54 @@
+
+ngOnInit(): void {
+  this.spinner.show(); // Start spinner
+
+  this.service.getRepoFromDatabase(this.http).subscribe(async (item: any) => {
+    const data = item.filter((repo: any) => repo.name.startsWith('sdop-') || repo.topics.includes('sdop-devops') || repo.topics.includes('sdop-group'));
+    this.originalData = data;
+    this.branchSource = new MatTableDataSource<any>(this.originalData);
+    this.branchSource.paginator = this.paginator;
+    this.combinedData = this.branchSource.filteredData;
+
+    const headers = new HttpHeaders({
+      'X-API-Key': `${environment.ACCESS_TOKEN}`
+    });
+
+    const fetchDetails = await Promise.all(this.combinedData.map(async (item: any) => {
+      const teamDetailsUrl = await this.service.getTeamDetailsUrl(this.http, item.name).toPromise();
+      const branchDetailsUrl = await this.service.getBranchDetailsUrl(this.http, item.name).toPromise();
+
+      const teamDetailsRequest = this.http.get(teamDetailsUrl, { headers }).toPromise().then((teamData: any) => {
+        item.teamDetails = teamData.map((team: any) => team.name).join(', ');
+      });
+
+      const branchDetailsRequest = this.http.get(branchDetailsUrl, { headers }).toPromise().then((branchData: any) => {
+        item.branchDetails = branchData.map((branch: any) => branch.name).join(', ');
+      });
+
+      return Promise.all([teamDetailsRequest, branchDetailsRequest]);
+    }));
+
+    // Handle after all requests are finished
+    this.cd.detectChanges(); // Update the view
+    this.spinner.hide(); // Hide the spinner after all requests complete
+  }, error => {
+    console.error('Error fetching repositories:', error);
+    this.spinner.hide(); // Hide spinner in case of error fetching repositories
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
