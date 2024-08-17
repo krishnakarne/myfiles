@@ -22,13 +22,8 @@ toggleRow(element: any, index: number) {
     this.spinner.hide();
   });
 
-  // Fetch members URL from service and then make the HTTP request
-  this.service.getMembersUrl(this.http, name).pipe(
-    mergeMap((membersUrl: string) => {
-      console.log('Members URL:', membersUrl); // Debugging URL
-      return this.http.get(membersUrl, httpOptions);
-    })
-  ).subscribe((response: any) => {
+  // Fetch members directly from the service
+  this.service.getMembers(this.http, name).subscribe((response: any) => {
     this.spinner.show();
     console.log('Members details response:', response);
     this.branchDetails = new MatTableDataSource(response);
