@@ -9,39 +9,39 @@ toggleRow(element: any, index: number) {
     headers: headers
   };
 
-  // Fetch branch details URL from service and then make the HTTP request
-  this.service.getBranchDetailsUrl(this.http, name).pipe(
-    mergeMap((branchDetailsUrl: string) => {
-      console.log('Branch Details URL:', branchDetailsUrl); // Debugging URL
-      return this.http.get(branchDetailsUrl, httpOptions);
+  // Fetch team repositories and set the data
+  this.service.getTeamRepositories(this.http, name).subscribe((res: any) => {
+    this.spinner.show();
+    this.teamData = res;
+    this.repoTeamDetails = new MatTableDataSource(this.teamData);
+    this.cd.detectChanges();
+
+    const teamsPaginator = this.paginatorteams.toArray()[index];
+    this.repoTeamDetails.paginator = teamsPaginator;
+    this.repoTeamDetails.sort = this.innerSort;
+    this.spinner.hide();
+  });
+
+  // Fetch members URL from service and then make the HTTP request
+  this.service.getMembersUrl(this.http, name).pipe(
+    mergeMap((membersUrl: string) => {
+      console.log('Members URL:', membersUrl); // Debugging URL
+      return this.http.get(membersUrl, httpOptions);
     })
   ).subscribe((response: any) => {
-    console.log('branch details url response:', response);
+    this.spinner.show();
+    console.log('Members details response:', response);
     this.branchDetails = new MatTableDataSource(response);
     this.cd.detectChanges();
 
-    const paginator = this.paginatorbranch.toArray()[index];
-    this.branchDetails.paginator = paginator;
+    const branchPaginator = this.paginatorbranch.toArray()[index];
+    this.branchDetails.paginator = branchPaginator;
     this.branchDetails.sort = this.innerSort;
+    this.spinner.hide();
   }, error => {
-    console.error('Error fetching repository branch details:', error);
+    console.error('Error fetching repository member details:', error);
+    this.spinner.hide();
   });
 
-  // Fetch team details URL from service and then make the HTTP request
-  this.service.getTeamDetailsUrl(this.http, name).pipe(
-    mergeMap((teamDetailsUrl: string) => {
-      console.log('Team Details URL:', teamDetailsUrl); // Debugging URL
-      return this.http.get(teamDetailsUrl, httpOptions);
-    })
-  ).subscribe((response: any) => {
-    console.log('team details url response:', response);
-    this.itemDetails = new MatTableDataSource(response); // Use the appropriate property here
-    this.cd.detectChanges();
-
-    const paginator = this.paginatorteams.toArray()[index];
-    this.itemDetails.paginator = paginator;
-    this.itemDetails.sort = this.innerSort;
-  }, error => {
-    console.error('Error fetching repository team details:', error);
-  });
+  // Existing logic to handle expanded rows, etc.
 }
