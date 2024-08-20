@@ -1,3 +1,7 @@
+nsure that all API endpoints or resources you're calling are served over HTTPS. Update the URL http://devsecops-control-center.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp:8080/frontconfig to use https instead of http.
+
+
+
 toggleRow(element: any, index: number) {
   const name = element.name;
 
