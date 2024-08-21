@@ -65,15 +65,13 @@ export class StickyNoteComponent {
       document.execCommand('insertImage', false, url);
     }
   }
-
 execCommand(command: string) {
   const selection = window.getSelection();
   if (!selection.rangeCount) return;
 
   const range = selection.getRangeAt(0);
-  const selectedText = range.extractContents();
-  
   let wrapper;
+
   switch (command) {
     case 'bold':
       wrapper = document.createElement('strong');
@@ -87,12 +85,33 @@ execCommand(command: string) {
     case 'strikeThrough':
       wrapper = document.createElement('s');
       break;
-    // Add more cases for other commands if needed
+    case 'insertUnorderedList':
+      wrapper = this.createUnorderedList(range);
+      break;
     default:
       wrapper = document.createElement('span');
       break;
   }
 
-  wrapper.appendChild(selectedText);
-  range.insertNode(wrapper);
+  if (command !== 'insertUnorderedList') {
+    wrapper.appendChild(range.extractContents());
+    range.insertNode(wrapper);
+  }
 }
+
+createUnorderedList(range: Range): HTMLElement {
+  const ul = document.createElement('ul');
+  const li = document.createElement('li');
+
+  if (range.collapsed) {
+    // If the selection is collapsed (i.e., the cursor is not highlighting text),
+    // we insert an empty <li> to allow the user to type
+    li.textContent = '\u200B';  // Zero-width space to keep the <li> visible
+  } else {
+    li.appendChild(range.extractContents());
+  }
+
+  ul.appendChild(li);
+  return ul;
+}
+
