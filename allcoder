@@ -68,6 +68,20 @@ export class StickyNoteComponent {
 
   saveNote() {
     // Your logic to save the note content
+
+
+
+
+
+
+execCommand(command: string) {
+  if (document.queryCommandSupported(command)) {
+    document.execCommand(command, false, null);
+  } else {
+    console.warn(`Command ${command} is not supported.`);
+  }
+}
+
     this.note.content = document.querySelector('.content').innerHTML;
     localStorage.setItem('notes', JSON.stringify(this.notes));
   }
