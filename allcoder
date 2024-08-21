@@ -66,23 +66,33 @@ export class StickyNoteComponent {
     }
   }
 
-  saveNote() {
-    // Your logic to save the note content
-
-
-
-
-
-
 execCommand(command: string) {
-  if (document.queryCommandSupported(command)) {
-    document.execCommand(command, false, null);
-  } else {
-    console.warn(`Command ${command} is not supported.`);
-  }
-}
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return;
 
-    this.note.content = document.querySelector('.content').innerHTML;
-    localStorage.setItem('notes', JSON.stringify(this.notes));
+  const range = selection.getRangeAt(0);
+  const selectedText = range.extractContents();
+  
+  let wrapper;
+  switch (command) {
+    case 'bold':
+      wrapper = document.createElement('strong');
+      break;
+    case 'italic':
+      wrapper = document.createElement('em');
+      break;
+    case 'underline':
+      wrapper = document.createElement('u');
+      break;
+    case 'strikeThrough':
+      wrapper = document.createElement('s');
+      break;
+    // Add more cases for other commands if needed
+    default:
+      wrapper = document.createElement('span');
+      break;
   }
+
+  wrapper.appendChild(selectedText);
+  range.insertNode(wrapper);
 }
