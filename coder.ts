@@ -1,56 +1,73 @@
-toggleRow(element: any, index: number) {
-  const name = element.name;
+execCommand(command: string) {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
 
-  // Get the URLs from the service, which uses the config map
-  const branchDetailsUrl = this.service.getBranchDetailsUrl(name);
-  const teamDetailsUrl = this.service.getTeamDetailsUrl(name);
+    const range = selection.getRangeAt(0);
 
-  const headers = new HttpHeaders({
-    'X-API-Key': `${environment.ACCESS_TOKEN}`,
-  });
-
-  const httpOptions = {
-    headers: headers,
-  };
-
-  // Show spinner before making the requests
-  this.spinner.show();
-
-  // Fetch branch details
-  this.service.getBranchDetailsUrl(this.http, name).subscribe(
-    (response: any) => {
-      console.log('branch details url response:', response);
-      this.branchDetails = new MatTableDataSource(response);
-      this.cd.detectChanges();
-
-      // Set up paginator and sort
-      const branchPaginator = this.paginatorbranch.toArray()[index];
-      this.branchDetails.paginator = branchPaginator;
-      this.branchDetails.sort = this.innerSort;
-      this.spinner.hide();
-    },
-    (error) => {
-      console.error('Error fetching repository branch details:', error);
-      this.spinner.hide();
+    if (command === 'insertUnorderedList') {
+        this.createUnorderedList(range);
+        return;
     }
-  );
 
-  // Fetch team details
-  this.service.getTeamDetailsUrl(this.http, name).subscribe(
-    (response: any) => {
-      this.teamData = response;
-      this.repoTeamDetails = new MatTableDataSource(this.teamData);
-      this.cd.detectChanges();
-
-      // Set up paginator and sort
-      const teamPaginator = this.paginatorteams.toArray()[index];
-      this.repoTeamDetails.paginator = teamPaginator;
-      this.repoTeamDetails.sort = this.innerSort;
-      this.spinner.hide();
-    },
-    (error) => {
-      console.error('Error fetching repo details:', error);
-      this.spinner.hide();
+    const wrapper = this.getWrapperElement(command);
+    if (range.collapsed) {
+        // If there's no selection, just insert an empty element
+        range.insertNode(wrapper);
+    } else {
+        // Wrap the selected text with the newly created element
+        wrapper.appendChild(range.extractContents());
+        range.insertNode(wrapper);
     }
-  );
+
+    // Adjust the range to select the new element
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNodeContents(wrapper);
+    selection.addRange(newRange);
+}
+
+getWrapperElement(command: string): HTMLElement {
+    let element: HTMLElement;
+    switch (command) {
+        case 'bold':
+            element = document.createElement('strong');
+            break;
+        case 'italic':
+            element = document.createElement('em');
+            break;
+        case 'underline':
+            element = document.createElement('u');
+            break;
+        case 'strikeThrough':
+            element = document.createElement('s');
+            break;
+        default:
+            element = document.createElement('span'); // Fallback if needed
+            break;
+    }
+    return element;
+}
+
+createUnorderedList(range: Range) {
+    const ul = document.createElement('ul');
+    const li = document.createElement('li');
+    li.textContent = '\u200B'; // Zero-width space to keep the <li> visible
+
+    if (range.collapsed) {
+        ul.appendChild(li);
+        range.insertNode(ul);
+    } else {
+        const content = range.extractContents();
+        li.appendChild(content);
+        ul.appendChild(li);
+        range.insertNode(ul);
+    }
+
+    // Place the cursor inside the newly created list item
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.setStart(li, 0);
+    newRange.collapse(true);
+    selection.addRange(newRange);
 }
