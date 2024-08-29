@@ -1,3 +1,21 @@
+ ngOnInit(): void {
+    this.loginService.getIsLoggedIn().subscribe((value) => {
+      this.isLoggedIn = value;
+      this.cd.detectChanges();
+    });
+
+    const token = this.tokenService.getToken();
+    if (token) {
+      this.loginService.setIsLoggedIn(true);
+    } else {
+      this.loginService.setIsLoggedIn(false);
+      this.tokenService.login(); // Redirect to SSO login
+    }
+
+    this.startMouseActivityTimer();
+  }
+
+
 import { Component, OnInit, HostListener } from '@angular/core';
 import { LoginService } from './services/login.service';
 import { TokenService } from './services/token.service';
