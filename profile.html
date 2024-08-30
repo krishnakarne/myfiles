@@ -1,0 +1,12 @@
+<div class="profile-card">
+  <div class="profile-header">
+    <img src="assets/avatar.png" alt="User Avatar" class="profile-avatar">
+    <h1>Hello!</h1>
+    <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+    <p>{{ user.email }}</p>
+  </div>
+  <div class="profile-actions">
+    <button (click)="goToAccount()">Account</button>
+    <button (click)="logout()">Logout</button>
+  </div>
+</div>
