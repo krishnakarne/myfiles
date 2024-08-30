@@ -1,12 +1,18 @@
-<div class="profile-card">
-  <div class="profile-header">
-    <img src="assets/avatar.png" alt="User Avatar" class="profile-avatar">
-    <h1>Hello!</h1>
-    <h2>{{ user.firstName }} {{ user.lastName }}</h2>
-    <p>{{ user.email }}</p>
+<mat-menu #menu="matMenu" class="profile-menu">
+  <div class="card-container">
+    <div class="top-card">
+      <div class="profile-icon">
+        <!-- Avatar Icon, you can replace this with CoreUI Avatar SVG -->
+        <img src="path-to-avatar-icon.svg" alt="Avatar" class="avatar-icon">
+      </div>
+    </div>
+    <div class="middle-card">
+      <div class="profile-name">{{ tokenService.getClaims().firstName }}</div>
+      <div class="profile-email">{{ tokenService.getClaims().email }}</div>
+    </div>
+    <div class="bottom-card">
+      <button mat-button class="account-button" (click)="onAccount()">Account</button>
+      <button mat-button class="logout-button" (click)="logout()">Logout</button>
+    </div>
   </div>
-  <div class="profile-actions">
-    <button (click)="goToAccount()">Account</button>
-    <button (click)="logout()">Logout</button>
-  </div>
-</div>
+</mat-menu>
