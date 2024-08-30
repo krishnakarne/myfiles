@@ -1,61 +1,67 @@
-<div [matMenuTriggerFor]="menu" class="profile-iconwrapper">
-  <button class="initial-wrapper" [matBadge]="getInitials(userInitials)" matBadgeSize="large">
-    <svg [icon]="icons.cilPowerStandby" size="s" title="Avatar Icon"></svg>
-  </button>
+<div class="profile-card">
+    <div class="avatar">
+        <svg [icon]="icons.cilUser" size="lg" title="Avatar"></svg>
+    </div>
+    <h1 class="greeting">Hello!</h1>
+    <div class="name">{{tokenservice.getClaims().firstName}}</div>
+    <div class="email">{{tokenservice.getClaims().email}}</div>
+    <button class="logout-button" (click)="logout()">Logout</button>
 </div>
-
-<mat-menu #menu="matMenu" class="profile-menu">
-  <div class="card-container">
-    <div class="top-card">
-      <div class="profile-icon">
-        <img src="path-to-avatar-icon.svg" alt="Avatar" class="avatar-icon" />
-      </div>
-    </div>
-    <div class="middle-card">
-      <div class="profile-name">{{tokenservice.getClaims().firstName}}</div>
-      <div class="profile-email">{{tokenservice.getClaims().email}}</div>
-    </div>
-    <div class="bottom-card">
-      <button class="logout-button" mat-menu-item (click)="logout()">Logout</button>
-    </div>
-  </div>
-</mat-menu>
 
 
 
 -----------------------------------------------------------------------------------------------------------
 
-.card-container {
-  width: 250px;
-  padding: 16px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+.profile-card {
+    width: 300px;
+    padding: 24px;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Helvetica Neue', sans-serif;
 }
 
-.profile-icon {
-  margin-bottom: 12px;
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 16px;
 }
 
-.avatar-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+.greeting {
+    font-size: 24px;
+    margin: 16px 0 8px;
 }
 
-.profile-name {
-  font-weight: bold;
-  margin-bottom: 4px;
+.name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 4px;
 }
 
-.profile-email {
-  font-size: 14px;
-  color: gray;
-  margin-bottom: 16px;
+.email {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
 }
 
 .logout-button {
-  width: 100%;
-  margin-top: 8px;
+    width: 100%;
+    padding: 12px;
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #ff4c4c;
 }
