@@ -1,18 +1,31 @@
-canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> | Observable<boolean> {
-  if (this.isLoggedin) {
-    return true;
-  } else {
-    return this.getsso().toPromise().then(() => {
-      if (this.isLoggedin) {
-        return true;
-      } else {
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { LoginService } from './login.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+
+  constructor(private loginService: LoginService, private router: Router) {}
+
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> | boolean {
+    if (this.loginService.isLoggedin) {
+      return true;
+    } else {
+      return this.loginService.getsso().toPromise().then((response) => {
+        if (this.loginService.isLoggedin) {
+          return true;
+        } else {
+          this.router.navigate(['/login']);
+          return false;
+        }
+      }).catch((error) => {
+        console.error('SSO Request failed:', error);
         this.router.navigate(['/login']);
         return false;
-      }
-    }).catch((error) => {
-      console.error('SSO Request failed:', error);
-      this.router.navigate(['/login']);
-      return false;
-    });
+      });
+    }
   }
 }
