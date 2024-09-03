@@ -1,175 +1,39 @@
-export class DrawIoDetailsComponent implements OnInit {
-  @ViewChild('container', { static: true }) container: ElementRef<HTMLElement>;
-  @ViewChild('mxgraphScriptsContainer', { static: true }) mxgraphScriptsContainer: ElementRef<HTMLElement>;
-  graphEditor: GraphEditor;
+import { Injectable } from '@angular/core';
+import { CanActivate, Router, RouterStateSnapshot, ActivatedRouteSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
-  constructor(private spinner: NgxSpinnerService) {}
+@Injectable({
+  providedIn: 'root'
+})
+export class LoginService implements CanActivate {
 
-  ngOnInit(): void {
-    this.spinner.show();
+  private isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-    const xml = '<mxGraphModel dx="1038" dy="381" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100"></mxGraphModel>';
+  constructor(public http: HttpClient, public router: Router) {}
 
-    this.graphEditor = new GraphEditor(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      actions: {
-        save: this.saveDiagram.bind(this)  // Bind your custom save logic to the existing save action
-      }
-    });
-
-    this.graphEditor.initialized(this.container.nativeElement, this.mxgraphScriptsContainer.nativeElement, {
-      load: () => this.graphEditor.setGraphEditorData({ xml }).then(() => {
-        this.spinner.hide();
-      })
-    });
+  public setIsLoggedIn(i: boolean): void {
+    this.isLoggedIn.next(i);
   }
 
-  saveDiagram(xml: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        // Handle saving logic here
-        // Store diagram data in local storage (optional)
-        localStorage.setItem('unsavedDiagram', xml);
+  public getIsLoggedIn(): Observable<boolean> {
+    return this.isLoggedIn.asObservable();
+  }
 
-        // Trigger download of the diagram
-        const blob = new Blob([xml], { type: 'text/xml' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'diagram.xml';  // You can customize the file name
-        a.click();
-        window.URL.revokeObjectURL(url);
+  getSSO() {
+    const ssourl = 'https://sso-service.apps.sov01.sov.pre.mxi.paas.cloudcenter.corp/saml/login';
+    return this.http.get<any>(ssourl);
+  }
 
-        resolve();
-      } catch (error) {
-        console.error('Save failed', error);
-        reject(error);
-      }
-    });
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    if (this.isLoggedIn.value) {
+      return true;
+    } else {
+      return this.router.parseUrl('/login');
+    }
   }
 }
-
-
-applySearch(): any[] {
-  if (this.searchBarValue !== "") {
-    const searchTerm = this.searchBarValue.toLowerCase();
-    return this.teamData.filter(e => {
-      return Object.entries(e).some(([key, val]) => {
-        if (val !== null && val !== undefined) {
-          if (Array.isArray(val)) {
-            // If the value is an array, check if any of the array items include the search term
-            return val.some(innerVal => innerVal.toString().toLowerCase().includes(searchTerm));
-          } else {
-            // Check if the stringified value includes the search term
-            return val.toString().toLowerCase().includes(searchTerm);
-          }
-        }
-        return false;
-      });
-    });
-  } else {
-    return this.teamData;
-  }
-}
-
-
-
-
-<div class="example-container" *ngIf="mobileQuery.matches">
-    <mat-toolbar class="example-toolbar">
-        <button mat-icon-button (click)="snav.toggle()"><svg [cIcon]="icons.cliMenu" size="xl"></svg></button>
-        <h1 class="example-app-name">DevSecOps Control Center</h1>
-    </mat-toolbar>
-</div>
-<mat-sidenav-container class="example-sidenav-container" [hasBackdrop]="false">
-    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [(opened)]="isExpanded" [fixedInViewport]="mobileQuery.matches"
-        [fixedTopGap]="56">
-        <mat-nav-list>
-            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
-                <svg [cIcon]="icons.cliHome" size="xs" title="List Icon"></svg>
-            </div>
-            <a mat-list-item routerLink="/home" routerLinkActive="active" (click)="closeSidenav()">Home</a>
-
-            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
-                <svg [cIcon]="icons.cliLayers" size="xs" title="List Icon"></svg>
-            </div>
-            <a mat-list-item routerLink="/repositories" routerLinkActive="active" (click)="closeSidenav()">Repositories</a>
-
-            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
-                <svg [cIcon]="icons.cliPeople" size="xs" title="List Icon"></svg>
-            </div>
-            <a mat-list-item routerLink="/copilot" routerLinkActive="active" (click)="closeSidenav()">Copilot</a>
-
-            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
-                <svg [cIcon]="icons.cliUser" size="xs" title="List Icon"></svg>
-            </div>
-            <a mat-list-item routerLink="/intake" routerLinkActive="active" (click)="closeSidenav()">Gluon Intake Process</a>
-
-            <div class="side-nav-icon" style="cursor: pointer; cursor: pointer;">
-                <svg [cIcon]="icons.cliMenu" size="xs" title="List Icon"></svg>
-            </div>
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        DevOps
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <mat-nav-list>
-                    <a mat-list-item routerLink="/devops" routerLinkActive="active" (click)="closeSidenav()">DevOps Overview</a>
-                    <a mat-list-item routerLink="/devops/repositories" routerLinkActive="active" (click)="closeSidenav()">DevOps Repositories</a>
-                    <a mat-list-item routerLink="/draw.io" routerLinkActive="active">Draw.io</a>
-                </mat-nav-list>
-            </mat-expansion-panel>
-
-        </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <div class="example-sidenav-content">
-            <router-outlet></router-outlet>
-
-------------------------------------------------------------------------------------------------------------------------
-.card {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 12px 24px rgba(0, 0, 0, 0.08);
-}
-softglow
-
-
-
----------------------------
-.card {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
-}
--
-sutt
-
-.card {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-
-        </div>
-    </mat-sidenav-content>
-</mat-sidenav-container>
