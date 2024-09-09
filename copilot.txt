@@ -1,0 +1,58 @@
+1. Overview
+The Copilot Feature of the DevSecOps Control Center provides detailed insights into how GitHub Copilot is being utilized across the organization. It presents data related to coding suggestions, lines accepted, and user activity in a graphical and tabular format. This feature helps in tracking the efficiency of Copilot, identifying popular languages, and analyzing which code editors are being used the most.
+
+2. Key Features
+Language Distribution Visualization (Graphical Representation):
+
+The left-hand side of the dashboard presents a donut chart displaying the language distribution used across the organization in conjunction with Copilot suggestions.
+Languages shown in the chart include:
+Python, TypeScript, YAML, Java, SQL, HTML, JSON, JavaScript, Markdown, and more.
+Each color in the chart represents a different language, making it easy to visualize which languages are most commonly used with Copilot.
+Editor Usage Distribution (Graphical Representation):
+
+The right-hand side presents another donut chart that tracks the distribution of code editors used in conjunction with Copilot suggestions.
+Editors represented include:
+VSCode, Visual Studio, JetBrains, etc.
+In the screenshot, JetBrains is marked with 109 suggestions.
+This feature helps identify which editors are preferred by developers in the organization.
+Copilot Details (Tabular Representation):
+
+Below the graphs is a detailed table that captures key statistics about Copilot usage, including:
+Date: The specific date for which the data is being displayed (e.g., 2024-08-13, 2024-08-14).
+Total Suggestions Count: The total number of suggestions provided by Copilot for that day (e.g., 1796 suggestions on 2024-08-13).
+Total Lines Accepted: The total number of lines suggested by Copilot that were accepted by developers (e.g., 848 lines on 2024-08-13).
+Total Acceptances Count: The number of times a suggestion from Copilot was accepted (e.g., 546 acceptances on 2024-08-13).
+Total Lines Suggested: The total number of lines that Copilot suggested on that particular day (e.g., 3005 lines on 2024-08-13).
+Total Active Users: The number of developers using Copilot on that particular day (e.g., 21 users on 2024-08-13).
+Language: The programming languages used with Copilot suggestions for that day (e.g., Python, Typescript, CSV, JSON, YAML).
+Editor: The code editors used with Copilot on that day (e.g., VSCode, JetBrains).
+Pagination:
+
+The pagination feature at the bottom of the table allows users to navigate through multiple records of Copilot usage across different dates.
+The table shows 5 entries per page by default, but users can change this setting.
+For instance, on page 2, data for 2024-08-14 is displayed, with 1558 suggestions, 570 lines accepted, and 417 acceptances.
+3. Additional Notes
+Real-time Data Integration:
+
+The data presented in the Copilot Feature is dynamically fetched using a GET service, ensuring the latest and most accurate information is displayed on the dashboard.
+The graphs and tables are updated as new data is generated from GitHub Copilot interactions.
+Usage Tracking:
+
+The donut charts for language and editor usage provide insights into which tools and programming languages are being utilized the most in conjunction with Copilot.
+This information can be helpful for determining organizational preferences and usage patterns among developers.
+Detailed Copilot Statistics:
+
+The Copilot Details table offers granular insights into daily Copilot usage, helping teams analyze the efficiency of the suggestions and the rate of adoption among developers.
+The table also allows managers and team leads to track individual language and editor preferences over time.
+User Activity Monitoring:
+
+The Total Active Users column in the table highlights the number of developers utilizing Copilot on any given day. This helps in monitoring the overall engagement and reliance on Copilot for development tasks.
+Editor Preference Analysis:
+
+The Editor Distribution chart provides a clear view of the preferred code editors among developers. This helps in understanding which environments Copilot is being used in most frequently, allowing for optimization of tools and environments for developers.
+Developer Performance Insights:
+
+The Total Suggestions Count, Total Lines Accepted, and Total Acceptances Count metrics give insights into how effectively Copilot is being used to assist in coding tasks, providing data that can be used to improve Copilot integration and workflows.
+Customizable View:
+
+The pagination feature allows users to navigate through a large amount of Copilot data efficiently. By adjusting the items per page, users can customize the display to fit their preferences and needs.
