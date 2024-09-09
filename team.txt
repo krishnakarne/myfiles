@@ -1,0 +1,63 @@
+DevSecOps Control Center - Teams Feature Release Note
+
+1. Overview
+The Teams Feature of the DevSecOps Control Center allows users to manage and view detailed information about teams associated with the organization. This feature provides a searchable table listing all teams and enables users to perform actions such as viewing detailed team repositories and members. The Teams page is designed for efficient team management in a DevSecOps environment.
+
+2. Key Features
+Team Table Display:
+
+The page displays a table listing all the teams in the system, along with an action column that provides more detailed information on each team.
+The columns in the table include:
+Name: The team name. The teams in this screenshot include:
+GR_ALMNXTGN_COPILOT_NGUSA_DEV
+GR_ALMNXTGN_ENGINEERING-ADMIN
+GR_ALMNXTGN_NGDETECT_ASM-SC-SERVICEUSERS_DEV
+GR_ALMNXTGN_NGUSA_ANALYTICS_AND_DECISION_SCI-ADMIN
+Actions - More Details Button:
+For each team, there is a More Details button that expands further details about the team. This includes information about the repositories they manage, open issues, forks, and members associated with the team.
+Search Feature:
+
+At the top of the Teams page is a search bar, allowing users to quickly find specific teams by typing part or all of the team name.
+This feature dynamically updates the displayed teams as the user types, filtering the list to make it easier to locate a particular team.
+More Details Feature:
+
+Clicking the More Details button for each team expands a section directly beneath the team name to reveal further details. These details include:
+a. Repositories:
+
+A table displaying all repositories managed by the team is shown. The columns include:
+Name: The repository name (e.g., models).
+URL: The URL link to the GitHub repository. For instance, in the screenshot, the URL for the repository models is:
+https://github.com/santander-group-usa/models
+Users can click the repository name to be directed to the repository’s GitHub page.
+b. Members:
+
+Below the repositories, the Members section is displayed, listing all team members.
+The columns in the members table include:
+User Name: The name of the user (e.g., OSCAR BUCIO SEGURA, Ailoni, Sai Jayanth Reddy).
+User Email: The email address of the user, such as obucio@gruposantander.com.mx.
+Site Admin: Indicates whether the user is a site administrator (e.g., NO for all users in the screenshot).
+Type: Displays the role of the user (e.g., User).
+Pagination Feature:
+
+Both the Teams table and the Members table feature pagination controls at the bottom to efficiently handle large datasets.
+Users can choose the number of items per page (e.g., 5, 20), allowing them to manage how much data is displayed at once.
+For example, the Members table shows 5 items per page in the screenshot, while the Teams table is set to display 20 items per page.
+3. Additional Notes
+Real-time Data:
+
+The Teams Feature fetches data dynamically using GET services, ensuring the information displayed about teams, repositories, and members is always up-to-date.
+Efficient Team Management:
+
+The search feature, combined with the ability to view detailed information about each team, allows for efficient team management. Users can quickly locate and manage teams without having to scroll through long lists.
+Detailed Team Information:
+
+Clicking on More Details provides a comprehensive view of each team’s repositories and members. This gives users full visibility into who is involved in each team, what repositories they manage, and any open issues or forks associated with those repositories.
+Role and Permission Management:
+
+The Members section allows users to view each team member’s role and whether they have site administrator privileges. This feature is crucial for maintaining security and ensuring proper role-based access control within the organization.
+Collaborative Tools:
+
+The repository information displayed for each team ensures that users can access the correct repositories directly from the Teams page. This facilitates collaboration and ensures teams can quickly navigate to their repositories for DevSecOps tasks.
+Scalable Design:
+
+The pagination feature ensures that the page remains performant even when managing a large number of teams and members, offering a scalable solution for organizations with extensive DevSecOps operations.
