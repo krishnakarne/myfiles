@@ -1,0 +1,68 @@
+1. Overview
+The Repositories Feature of the DevSecOps Control Center allows users to manage, search, and access detailed information about the organization's repositories. This feature provides a central interface to view repositories, branch details, and perform actions such as adding new repositories and viewing individual repository metadata. This functionality is particularly useful for DevSecOps teams to streamline the management of multiple repositories efficiently.
+
+2. Key Features
+Repository Table Display:
+
+The Repositories page displays a table of repositories, each with important metadata.
+The columns in the table include:
+ID: A unique identifier for each repository (e.g., 816850452).
+Name: The name of the repository (e.g., oracle-service-app).
+Language: The programming language used in the repository (e.g., Java, DataWeave).
+Topic: The topic under which the repository is categorized (e.g., commercial-banking-usa).
+Default Branch: The default branch set for the repository (e.g., master).
+Actions - More Details Button:
+A More Details button is provided for each repository. Upon clicking this button, users can view additional information about the repository, including a list of branches.
+The More Details section expands to show branch names and URLs for each branch. For example:
+Branches: development, feature/revised-dependencies, and master.
+URLs corresponding to each branch are provided, which link directly to the GitHub branch (e.g., https://github.com/santander-group-usa/oracle-service-app/tree/development).
+Search Feature:
+
+A search bar is available at the top of the repository table to enable users to quickly find a specific repository by typing keywords or repository names.
+The search results update dynamically as the user types, filtering through the repository list to show relevant entries.
+This feature is especially useful for users managing a large number of repositories.
+Add Repository Feature:
+
+The Add Repo button allows users to create a new repository within the system.
+Upon clicking the Add Repo button, a form appears with the following fields:
+Name: The name of the repository.
+Slug: The URL-friendly identifier for the repository.
+Visibility: Allows setting the repository’s visibility to either public or private.
+Description: Users can add a short description of the repository.
+Permission: This section allows the assignment of permissions to specific users (e.g., Karne, Sai Krishna Chaitanya).
+After entering the required details, the user submits the form, and the repository is added to the list.
+Repository Details and Branch Information:
+
+Clicking the More Details button for any repository expands an area below the row, revealing additional metadata such as branches.
+Each repository contains multiple branches (e.g., development, master, feature/revised-dependencies).
+For each branch, a URL is provided, allowing users to navigate directly to the branch’s location on GitHub.
+The branch information includes the name of the branch, a description (if available), and the link to the branch.
+Pagination Feature:
+
+The repository table includes pagination controls at the bottom to efficiently manage large datasets.
+Users can select the number of items to display per page (e.g., 5, 10, or 20 items).
+The system displays the current page and the total number of pages, allowing users to navigate between different pages of repositories.
+Pagination ensures the table remains performant even when managing a large number of repositories (over 3000 repositories).
+Download Feature (Optional):
+
+A download feature allows users to export repository details for offline review.
+The export may include repository metadata such as repository names, IDs, branches, and default branches.
+This feature is useful for documentation or auditing purposes.
+3. Additional Notes
+GET Service Integration:
+
+The repository data on the page is fetched using a GET service. This ensures that the information displayed in the table is current and up-to-date, reflecting any new or updated repositories.
+Error Handling:
+
+If there is an issue with the GET service (e.g., a network error), an error message is displayed to inform the user, allowing them to retry the operation or check their network connection.
+UI Design and Accessibility:
+
+The Repositories Feature follows a clean and organized UI design. The use of a red header and white table ensures the data stands out and remains easily readable.
+The More Details button is placed at a convenient location for users to quickly access branch details.
+Pagination controls and the search bar are placed at intuitive locations, making the navigation of large datasets easy for the user.
+User Management:
+
+When adding a repository, users can assign specific permissions to different team members. This enhances security and ensures that only authorized personnel have access to critical repositories.
+Performance Considerations:
+
+The pagination feature is crucial for maintaining the page’s performance when dealing with large numbers of repositories. This prevents the table from overloading the browser and ensures a smooth user experience.
