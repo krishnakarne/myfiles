@@ -1,0 +1,22 @@
+1. Overview
+The DevSecOps Control Center is a comprehensive platform designed to streamline the management and visibility of DevOps and DevSecOps processes for modern enterprises. The platform provides an intuitive dashboard that centralizes access to GitHub repositories, CI/CD processes, team member information, and collaboration tools like Draw.io. This ensures that teams can monitor, manage, and enhance their workflow while focusing on security integration.
+
+2. Key Features
+Centralized Dashboard for DevSecOps: A user-friendly interface displaying relevant information in a card format. Cards display details on total repositories, teams, members, and CI/CD processes.
+
+Repository Management: Displays the total active repositories and DevSecOps repositories with the ability to click for more details.
+
+Teams and Member Information: Provides information on the total number of teams and members, making team management more transparent.
+
+Integrated Tools:
+
+Draw.io Integration: Seamless diagram creation and real-time collaboration.
+Copilot Details: Quick access to Copilot insights, useful for coding assistance and automation.
+CI/CD Pipeline Tracking: Mulesoft and Openshift CI/CD integrations allow teams to track the status of their CI/CD pipelines and navigate to detailed views.
+
+Real-Time Data Updates: GET service integration ensures that data on the cards is fetched and updated in real-time, providing accurate insights.
+
+3. Additional Notes
+The GET service is used to fetch information for each card on the home page dynamically.
+The platform allows teams to track and manage CI/CD processes and repository details at a glance.
+The dashboard emphasizes the availability of all GitHub repositories and their details while integrating diagramming tools for enhanced workflow visualization.
