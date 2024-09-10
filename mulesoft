@@ -1,0 +1,59 @@
+The Mulesoft CI/CD Feature provides users with an overview of continuous integration and continuous deployment (CI/CD) pipelines related to Mulesoft API services within the DevSecOps Control Center. This module allows for tracking the status of pipeline executions, viewing artifact versions, and navigating to more detailed pipeline logs or messages. The table-driven interface ensures easy navigation and management of various CI/CD pipelines.
+
+2. Key Features
+CI/CD Pipeline Table:
+
+The main interface is a table that provides an overview of the Mulesoft CI/CD pipelines. Each row represents a pipeline or a specific artifact in the system, with details about its execution and status.
+Columns:
+Id: Each pipeline is assigned a unique ID, listed in this column (e.g., 1, 2, 3, etc.).
+Type: This column identifies the type of artifact or service, such as SBNA (errors-systems-api-services) or cd (continuous deployment).
+Artifact Id: The ID of the artifact or service for which the pipeline is running (e.g., errors-systems-api-services).
+Artifact Version: The specific version of the artifact being deployed (e.g., 1.0.S4-SNAPSHOT).
+Git Tag: The Git tag associated with the build (e.g., v1.0.S4-SNAPSHOT).
+Environment: The environment in which the pipeline is executed, such as CERT (certification).
+Target: Specifies the target environment or node where the pipeline is deployed (e.g., CERT-SBNA-13).
+Triggered By: Indicates the user or system that triggered the pipeline (e.g., test, x339770-svn_sangroup).
+Branch: Shows the Git branch associated with the build, which could be test or feature-SBNA/mule4-testing.
+Pipeline Status: Displays the current status of the pipeline (e.g., SUCCESS or FAILURE).
+Link: Provides a direct link to pipeline logs or additional details. For example, clicking test may take users to more detailed pipeline logs.
+Pipeline Status Message: Clicking More Details gives further information about the specific job run, logs, and messages related to that pipeline.
+Search Feature:
+
+At the top of the table, there is a search bar that allows users to quickly filter pipelines by artifact id, artifact version, or other related fields. This feature makes it easy to locate specific pipeline executions or services without manually searching through the entire list.
+Detailed Pipeline Information:
+
+Clicking on the More Details button provides users with additional information regarding the selected pipeline execution. This may include:
+Logs from the pipeline execution.
+Detailed messages explaining the status, including errors or successful deployment messages.
+Additional links to external services, such as build logs or artifact repositories.
+Pipeline Job Details (Expanded View):
+
+When expanded, this section provides more granular details about a specific pipeline job. In the screenshot, after clicking More Details, users can view the following information:
+Job Name: Specifies the name of the job associated with the pipeline run.
+Status: Displays the overall status of the job (e.g., SUCCESS, FAILURE).
+Pagination:
+
+The table is paginated, allowing users to manage large volumes of pipeline data efficiently. Users can change the Items per page to display more or fewer entries at a time (e.g., 5 items per page).
+In the screenshot, 5 items are shown, with the option to navigate through the remaining pipeline data using pagination controls at the bottom.
+3. Additional Notes
+Real-time Pipeline Monitoring:
+
+The Mulesoft CI/CD Module fetches pipeline data dynamically, ensuring real-time visibility into the status of deployments and build processes. Users are always presented with the latest pipeline data, allowing them to respond quickly to failures or deployment issues.
+Error Tracking and Troubleshooting:
+
+Pipelines with a status of FAILURE provide users with additional troubleshooting information. Clicking on the More Details button allows access to logs and messages that can help identify what went wrong during the pipeline execution.
+This feature is crucial for DevOps engineers who need to quickly resolve issues related to deployments.
+Comprehensive Pipeline Details:
+
+Each row in the table contains all the relevant information about the pipeline, such as the Artifact Id, Version, Git Tag, Branch, and more. This ensures that users have complete visibility into the pipeline execution process, from the code branch being deployed to the specific environment.
+User and Trigger Insights:
+
+The Triggered By column provides insights into who or what initiated the pipeline, allowing administrators to track user activity and understand which actions or users are responsible for triggering builds and deployments.
+Easy Navigation for DevOps:
+
+The combination of pagination, a search bar, and the More Details button ensures that users can quickly navigate the table and find relevant information without getting overwhelmed by the number of pipelines listed.
+The module is designed to handle large volumes of pipeline data while remaining user-friendly.
+Efficient Deployment Monitoring:
+
+The ability to monitor pipeline executions for different environments (e.g., CERT) ensures that teams can track deployments across various stages, such as certification, testing, and production environments.
+By listing the environment and target nodes, users can ensure that their pipelines are being executed in the correct environment and against the correct infrastructure targets.
