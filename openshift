@@ -1,0 +1,90 @@
+1. Overview
+The Mulesoft CI/CD module provides a comprehensive view of the continuous integration and continuous deployment pipelines for Mulesoft-related services. The module allows users to monitor, track, and analyze the pipeline execution statuses, making it easier to identify failures, successful builds, and deployment targets.
+
+2. Key Features
+Pipeline Table Overview:
+
+This table displays all the pipelines related to Mulesoft services, categorized by their Id, Type, Artifact Id, Artifact Version, Git Tag, Environment, Target, Triggered By, Branch, Pipeline Status, Link, and Pipeline Status Message.
+Columns Description:
+
+Id: Sequential identification of the pipelines (e.g., 1, 2, 3, etc.).
+Type: Represents the type of service (e.g., SBNA, cd).
+Artifact Id: Indicates the name of the artifact/service being deployed (e.g., errors-systems-api-services).
+Artifact Version: The version of the artifact being deployed (e.g., 1.0.S4-SNAPSHOT).
+Git Tag: The corresponding Git tag for the deployment (e.g., v1.0.S4-SNAPSHOT).
+Environment: The environment where the pipeline is executed (e.g., CERT for certification).
+Target: Specifies the target system for deployment (e.g., CERT-SBNA-13).
+Triggered By: Shows the user or process responsible for initiating the pipeline (e.g., test, x339770-svn_sangroup).
+Branch: The Git branch used for the build (e.g., test, feature-SBNA/mule4-testing).
+Pipeline Status: Displays whether the pipeline execution succeeded or failed (e.g., SUCCESS, FAILURE).
+Link: Directs the user to more detailed logs or pipeline data (e.g., test).
+Pipeline Status Message: Clicking More Details opens a page with detailed logs and status messages.
+Pipeline Job Details:
+
+When users click on More Details, they access further information about the job execution. It contains details like:
+Job Name: The name of the job executed within the pipeline (e.g., Build, Deploy, Test).
+Status: The status of individual jobs in the pipeline (e.g., COMPLETED, IN PROGRESS, PENDING).
+Search Functionality:
+
+A search bar at the top allows users to quickly filter pipelines based on criteria such as artifact ID, version, and more, making it easier to find specific pipeline executions.
+Pagination:
+
+Users can adjust the number of pipelines displayed per page using pagination. This feature helps manage a large number of pipeline entries efficiently (e.g., 5 items per page).
+3. Additional Notes
+Real-time Updates:
+
+The pipeline data is dynamically fetched in real-time using API services, ensuring users always have up-to-date information about the status of pipeline executions.
+Error Handling and Troubleshooting:
+
+In the case of pipeline failures (e.g., FAILURE status), users can click on More Details to get detailed logs and error messages for troubleshooting.
+User Interaction:
+
+The Triggered By field provides valuable information on who initiated the pipeline, making it easier to track and understand pipeline runs triggered by different users or automated systems.
+Pipeline Summary:
+
+By displaying artifact ID, version, environment, and pipeline status in one view, this module offers a comprehensive summary of Mulesoft deployments, allowing users to manage and monitor the entire pipeline lifecycle from build to deployment.
+DevSecOps Control Center - Openshift CI/CD Feature Release Note
+1. Overview
+The Openshift CI/CD feature in the DevSecOps Control Center is designed to track and manage CI/CD pipelines specific to Openshift clusters. It provides insights into build, deployment, and testing pipelines related to various artifact versions and clusters.
+
+2. Key Features
+Openshift Pipeline Table Overview:
+
+The table displays key information about Openshift CI/CD pipelines, including the following columns:
+Id, Type, Artifact ID, Artifact Version, Openshift Cluster, Openshift Namespace, Triggered By, Branch, Pipeline Status, Link, and Pipeline Status Message.
+Columns Description:
+
+Id: A unique identifier for each pipeline (e.g., 1, 2).
+Type: Specifies the type of deployment or artifact (e.g., SBNA or cd).
+Artifact ID: The artifact associated with the pipeline (e.g., onehub-common-backend, 1234).
+Artifact Version: The version of the artifact being deployed (e.g., 0.0.1-SNAPSHOT).
+Openshift Cluster: The Openshift cluster where the deployment is executed (e.g., TestCluster).
+Openshift Namespace: The namespace within the cluster (e.g., TestNamespace).
+Triggered By: The user or system that triggered the pipeline (e.g., test).
+Branch: The branch of the Git repository used in the deployment (e.g., test).
+Pipeline Status: Indicates the outcome of the pipeline execution (e.g., SUCCESS).
+Link: Provides a link to additional logs or resources related to the pipeline execution.
+Pipeline Status Message: A More Details button allows users to dive deeper into the logs and job execution details.
+Pipeline Job Details (Expanded View):
+
+Users can expand individual pipelines to view job-level details, such as:
+Build, Deploy, Test: These job steps show the status of each phase in the pipeline (e.g., COMPLETED, IN PROGRESS, PENDING).
+Search Feature:
+
+A search bar allows users to filter through pipelines by artifact ID, version, or other relevant criteria to locate specific pipeline executions faster.
+Pagination:
+
+Similar to the Mulesoft CI/CD module, users can paginate through entries and change the number of entries displayed per page (e.g., 5 items per page).
+3. Additional Notes
+Openshift Integration:
+
+The module provides insights specifically tailored to Openshift CI/CD pipelines, displaying relevant data like Openshift Cluster and Namespace in addition to the standard pipeline details.
+Job Status Tracking:
+
+Detailed tracking of Build, Deploy, and Test job statuses allows users to ensure each phase of the pipeline is executed as expected, and troubleshoot issues as they arise.
+Real-time Monitoring:
+
+Just like the Mulesoft module, this module fetches pipeline data in real time, ensuring up-to-date status for each pipeline execution.
+Efficient Monitoring and Management:
+
+The ability to quickly navigate through multiple pipelines using the search and pagination features helps DevOps teams efficiently monitor and manage Openshift-related deployments.
