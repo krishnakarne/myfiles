@@ -1,70 +1,13 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <ng-container matColumnDef="name">
-    <td mat-cell *matCellDef="let element">
-      <div *ngIf="!editingElement || editingElement !== element; else editingMode">
-        {{ element.name }}
-      </div>
-      <ng-template #editingMode>
-        <input matInput [(ngModel)]="element.name" (blur)="saveChanges(element)" />
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <td mat-cell *matCellDef="let element">
-      <button mat-button (click)="toggleEdit(element)">
-        <svg *ngIf="editingElement !== element; else saveIcon" [cicon]="'icons.cilPencil'"></svg>
-        <ng-template #saveIcon>
-          <svg [cicon]="'icons.cilCheck'"></svg>
-        </ng-template>
-      </button>
-      <button mat-button (click)="deleteRow(element)">
-        <svg [cicon]="'icons.cilTrash'"></svg>
-      </button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-<button mat-button (click)="addRow()">
-  Add Row <svg [cicon]="'icons.cibAddthis'"></svg>
-</button>
-------------------------------------------------------------------------------------
-export class DevopsInventoryComponent {
-  icons = { /* your icons */ };
-  dataSource = new MatTableDataSource<PeriodicElement>([
-    { name: 'Open Shift', email: 'test2@email.com', env: 'Cert', links: 'https://example-link.com' },
-    { name: 'Nexus Data Science', email: 'test2@email.com', env: 'Cert', links: 'https://example-link.com' }
-    // Other rows...
-  ]);
-
-  displayedColumns: string[] = ['name', 'email', 'env', 'links', 'actions'];
-
-  editingElement: PeriodicElement | null = null;
-
-  toggleEdit(element: PeriodicElement): void {
-    if (this.editingElement === element) {
-      // Save changes when clicking the check icon
-      this.saveChanges(element);
-      this.editingElement = null;
-    } else {
-      // Start editing
-      this.editingElement = element;
-    }
-  }
-
-  saveChanges(element: PeriodicElement): void {
-    // Implement any additional save logic here
-    console.log('Changes saved for', element);
-  }
-
-  deleteRow(element: PeriodicElement): void {
-    this.dataSource.data = this.dataSource.data.filter(el => el !== element);
-  }
-
-  addRow(): void {
-    const newRow: PeriodicElement = { name: '', email: '', env: '', links: '' };
-    this.dataSource.data = [...this.dataSource.data, newRow];
-  }
-}
+ <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <!-- Toggle between pencil and check icon based on editing state -->
+          <button mat-button (click)="toggleEdit(element)">
+            <mat-icon *ngIf="editingElement !== element">edit</mat-icon>
+            <mat-icon *ngIf="editingElement === element">check</mat-icon>
+          </button>
+          <button mat-button (click)="deleteRow(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
