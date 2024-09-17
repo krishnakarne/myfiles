@@ -1,3 +1,24 @@
+// Add this function to your component
+isFormValid(element: any): boolean {
+  return element.applicationName && element.url && element.location && element.description;
+}
+
+// Or if you are using a form (FormGroup) to validate:
+
+isFormValid(element: any): boolean {
+  return this.myForm.valid;  // Assuming you have a FormGroup for your form
+}
+
+// You can also validate individual fields
+isFormValid(element: any): boolean {
+  return element.applicationName?.trim() !== '' &&
+         element.url?.trim() !== '' &&
+         element.location?.trim() !== '' &&
+         element.description?.trim() !== '';
+}
+
+
+
 /* Wrapper for the icons */
 .icon-wrapper {
   display: flex;
