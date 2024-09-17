@@ -1,20 +1,3 @@
-<!-- Actions column -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef>Actions</th>
-  <td mat-cell *matCellDef="let element">
-    <!-- Toggle between pencil and check icon based on editing state -->
-    <div class="icon-wrapper">
-      <button mat-button (click)="toggleEdit(element)" class="edit-btn">
-        <mat-icon *ngIf="!element.isEditing">edit</mat-icon>
-        <mat-icon *ngIf="element.isEditing">check</mat-icon>
-      </button>
-      <button mat-button (click)="deleteRow(element)" class="delete-btn">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </div>
-  </td>
-</ng-container>
-
 /* Wrapper for the icons */
 .icon-wrapper {
   display: flex;
@@ -22,32 +5,35 @@
   align-items: center;
 }
 
-/* Button styling for edit/check icons */
+/* Edit button styling */
 button.mat-button.edit-btn {
-  border-radius: 50%;
-  padding: 8px;
-  background-color: #007bff; /* Blue background for edit icon */
-  color: white; /* White icon color */
-  border: none;
-  margin-right: 10px; /* Space between buttons */
-}
-
-/* Button styling for delete icon */
-button.mat-button.delete-btn {
-  border-radius: 50%;
-  padding: 8px;
-  background-color: #dc3545; /* Red background for delete icon */
+  background-color: #007bff; /* Blue background for the edit icon */
   color: white;
-  border: none;
+  border-radius: 50%; /* Circular button */
+  padding: 0; /* Remove default padding */
+  width: 36px; /* Fixed width */
+  height: 36px; /* Fixed height */
+  min-width: auto; /* Override default Angular Material button width */
 }
 
-/* Icon size */
+/* Delete button styling */
+button.mat-button.delete-btn {
+  background-color: #dc3545; /* Red background for the delete icon */
+  color: white;
+  border-radius: 50%; /* Circular button */
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  min-width: auto;
+}
+
+/* Adjust the icon inside the buttons */
 .mat-icon {
-  font-size: 18px;
+  font-size: 20px; /* Slightly larger icon */
 }
 
 /* Hover effect */
 button.mat-button:hover {
-  opacity: 0.9;
-  transition: opacity 0.2s ease-in-out;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
 }
