@@ -1,75 +1,64 @@
-import { Injectable } from '@angular/core';
-import { TokenClaims } from './tokenClaims.model';
+<table mat-table [dataSource]="branchSource" class="mat-elevation-z8">
+  <!-- Application Name Column -->
+  <ng-container matColumnDef="name">
+    <td mat-cell *matCellDef="let element">
+      <div *ngIf="editingRowId !== element.id">{{ element.name }}</div>
+      <div *ngIf="editingRowId === element.id">
+        <input matInput [(ngModel)]="element.name" placeholder="Enter Application Name" />
+      </div>
+    </td>
+  </ng-container>
 
-@Injectable({
-  providedIn: 'root'
-})
-export class TokenService {
-  private token: string = '';
-  claims: TokenClaims = {
-    nameID: '',
-    exp: 0,
-    firstName: 'no user',
-    lastName: 'no user',
-    email: 'no user',
-    afkReplyTime: 0,
-    afkCheckTime: 0
-  };
-  timer: any = null;
+  <!-- URL Column -->
+  <ng-container matColumnDef="url">
+    <td mat-cell *matCellDef="let element">
+      <div *ngIf="editingRowId !== element.id">{{ element.url }}</div>
+      <div *ngIf="editingRowId === element.id">
+        <input matInput [(ngModel)]="element.url" placeholder="Enter URL" />
+      </div>
+    </td>
+  </ng-container>
 
-  setToken(token: string) {
-    if (token && token.trim() !== '') {
-      this.token = token;
-      localStorage.setItem('token', token);
-      this.claims = this.parseJwt(token);
-      console.log('Token set in localStorage:', token);
-    } else {
-      console.warn('Invalid token, not setting or clearing localStorage.');
-    }
-  }
+  <!-- Location Column -->
+  <ng-container matColumnDef="location">
+    <td mat-cell *matCellDef="let element">
+      <div *ngIf="editingRowId !== element.id">{{ element.location }}</div>
+      <div *ngIf="editingRowId === element.id">
+        <input matInput [(ngModel)]="element.location" placeholder="Enter Location" />
+      </div>
+    </td>
+  </ng-container>
 
-  getToken() {
-    if (this.token) {
-      return this.token;
-    } else {
-      return localStorage.getItem('token');
-    }
-  }
+  <!-- Description Column -->
+  <ng-container matColumnDef="description">
+    <td mat-cell *matCellDef="let element">
+      <div *ngIf="editingRowId !== element.id">{{ element.description }}</div>
+      <div *ngIf="editingRowId === element.id">
+        <input matInput [(ngModel)]="element.description" placeholder="Enter Description" />
+      </div>
+    </td>
+  </ng-container>
 
-  parseJwt(token: string): TokenClaims | null {
-    try {
-      return JSON.parse(this.b64DecodeUnicode(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    } catch (ex) {
-      console.error('Error parsing token:', ex);
-      return null;
-    }
-  }
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <td mat-cell *matCellDef="let element">
+      <div class="icon-wrapper">
+        <button mat-button (click)="toggleEdit(element)">
+          <mat-icon *ngIf="editingRowId !== element.id">edit</mat-icon>
+          <mat-icon *ngIf="editingRowId === element.id">check</mat-icon>
+        </button>
+        <button mat-button (click)="deleteRow(element)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
 
-  private b64DecodeUnicode(str: string): string {
-    return decodeURIComponent(Array.prototype.map.call(atob(str), (c: string) => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  }
+  <!-- Table header and rows -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
 
-  getClaims() {
-    if (this.token) {
-      return this.parseJwt(this.token);
-    } else if (localStorage.getItem('token')) {
-      return this.parseJwt(localStorage.getItem('token')!);
-    } else {
-      return this.claims;
-    }
-  }
+<button (click)="addRow()">Add Row</button>
 
-  login() {
-    window.location.href = 'https://sso-service.apps.sov01.sov.dev.mx1.paas.cloudcenter.corp/saml/login';
-  }
-
-  logout(): void {
-    this.token = '';
-    localStorage.removeItem('token');
-    const currentPath = window.location.pathname;
-    localStorage.setItem('path', currentPath);
-    window.location.href = '/login';
-  }
-}
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
