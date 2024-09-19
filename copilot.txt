@@ -1,58 +1,54 @@
-1. Overview
-The Copilot Feature of the DevSecOps Control Center provides detailed insights into how GitHub Copilot is being utilized across the organization. It presents data related to coding suggestions, lines accepted, and user activity in a graphical and tabular format. This feature helps in tracking the efficiency of Copilot, identifying popular languages, and analyzing which code editors are being used the most.
+DevSecOps Control Center - DevOps Inventory Page
+Overview
+The DevSecOps Control Center is a comprehensive interface designed for managing and monitoring various DevOps tools, repositories, and platforms. The DevOps Inventory page provides a streamlined view of multiple applications that are integral to the DevOps lifecycle, such as GitHub, Nexus, OpenShift, and Harbor Registry. The inventory system allows users to view, add, edit, and delete records of DevOps tools, all within a centralized dashboard.
 
-2. Key Features
-Language Distribution Visualization (Graphical Representation):
+The page supports operations such as tracking dependencies, version control, orchestration platforms, and artifact storage across various environments. This functionality makes it easier for DevOps teams to manage their tools and repositories from a single platform.
 
-The left-hand side of the dashboard presents a donut chart displaying the language distribution used across the organization in conjunction with Copilot suggestions.
-Languages shown in the chart include:
-Python, TypeScript, YAML, Java, SQL, HTML, JSON, JavaScript, Markdown, and more.
-Each color in the chart represents a different language, making it easy to visualize which languages are most commonly used with Copilot.
-Editor Usage Distribution (Graphical Representation):
+Key Features
+Inventory Table: The core of the page is a table that lists all the DevOps tools with relevant details:
 
-The right-hand side presents another donut chart that tracks the distribution of code editors used in conjunction with Copilot suggestions.
-Editors represented include:
-VSCode, Visual Studio, JetBrains, etc.
-In the screenshot, JetBrains is marked with 109 suggestions.
-This feature helps identify which editors are preferred by developers in the organization.
-Copilot Details (Tabular Representation):
+ID: A unique identifier for each tool.
+Application Name: The name of the tool (e.g., GitHub, Nexus, OpenShift).
+Links: URL links to the respective tools.
+Environments: Information about where the tool is deployed (e.g., On-Premise, PRO-MX1).
+Description: Brief details about the tool and its use case.
+Actions:
 
-Below the graphs is a detailed table that captures key statistics about Copilot usage, including:
-Date: The specific date for which the data is being displayed (e.g., 2024-08-13, 2024-08-14).
-Total Suggestions Count: The total number of suggestions provided by Copilot for that day (e.g., 1796 suggestions on 2024-08-13).
-Total Lines Accepted: The total number of lines suggested by Copilot that were accepted by developers (e.g., 848 lines on 2024-08-13).
-Total Acceptances Count: The number of times a suggestion from Copilot was accepted (e.g., 546 acceptances on 2024-08-13).
-Total Lines Suggested: The total number of lines that Copilot suggested on that particular day (e.g., 3005 lines on 2024-08-13).
-Total Active Users: The number of developers using Copilot on that particular day (e.g., 21 users on 2024-08-13).
-Language: The programming languages used with Copilot suggestions for that day (e.g., Python, Typescript, CSV, JSON, YAML).
-Editor: The code editors used with Copilot on that day (e.g., VSCode, JetBrains).
-Pagination:
+Edit Functionality: Users can click the pencil icon to edit existing entries. A confirmation modal appears, ensuring the update is intentional.
+Delete Functionality: Users can remove entries by clicking the trash bin icon, which prompts a confirmation message before deletion.
+Add New Entry: A user can add a new tool by filling out the application name, link, environment, and description fields. This feature allows for easy management and expansion of the toolset.
+Pagination: The table supports pagination, allowing users to easily navigate through large datasets. Users can choose how many rows they want to display per page (5, 10, 15, etc.).
 
-The pagination feature at the bottom of the table allows users to navigate through multiple records of Copilot usage across different dates.
-The table shows 5 entries per page by default, but users can change this setting.
-For instance, on page 2, data for 2024-08-14 is displayed, with 1558 suggestions, 570 lines accepted, and 417 acceptances.
-3. Additional Notes
-Real-time Data Integration:
+Confirmation Modals:
 
-The data presented in the Copilot Feature is dynamically fetched using a GET service, ensuring the latest and most accurate information is displayed on the dashboard.
-The graphs and tables are updated as new data is generated from GitHub Copilot interactions.
-Usage Tracking:
+Update Confirmation: When editing an entry, a modal pops up asking if the user is sure about updating the row with a specific ID.
+Delete Confirmation: A similar modal appears during deletion, confirming whether the user wants to delete the row with the corresponding ID.
+UI Design:
 
-The donut charts for language and editor usage provide insights into which tools and programming languages are being utilized the most in conjunction with Copilot.
-This information can be helpful for determining organizational preferences and usage patterns among developers.
-Detailed Copilot Statistics:
-
-The Copilot Details table offers granular insights into daily Copilot usage, helping teams analyze the efficiency of the suggestions and the rate of adoption among developers.
-The table also allows managers and team leads to track individual language and editor preferences over time.
-User Activity Monitoring:
-
-The Total Active Users column in the table highlights the number of developers utilizing Copilot on any given day. This helps in monitoring the overall engagement and reliance on Copilot for development tasks.
-Editor Preference Analysis:
-
-The Editor Distribution chart provides a clear view of the preferred code editors among developers. This helps in understanding which environments Copilot is being used in most frequently, allowing for optimization of tools and environments for developers.
-Developer Performance Insights:
-
-The Total Suggestions Count, Total Lines Accepted, and Total Acceptances Count metrics give insights into how effectively Copilot is being used to assist in coding tasks, providing data that can be used to improve Copilot integration and workflows.
-Customizable View:
-
-The pagination feature allows users to navigate through a large amount of Copilot data efficiently. By adjusting the items per page, users can customize the display to fit their preferences and needs.
+The interface follows a red-and-white color scheme, with a focus on simplicity and clarity.
+Buttons for actions (Add, Edit, Delete) are clearly labeled and easy to access.
+Add, Edit, Delete Functionalities
+1. Add Functionality:
+When the user clicks the "Add Row" button, a new row appears at the bottom of the table with empty fields for:
+Application Name
+URL Link
+Environment
+Description
+Once the fields are populated, clicking the confirmation checkmark button submits the new entry into the system, adding it to the inventory list.
+2. Edit Functionality:
+Clicking the pencil (edit) icon beside any row will allow the user to modify the content of that entry.
+The system will prompt a modal, asking the user for confirmation to ensure that the update is intentional.
+On confirmation, the changes will reflect in the table.
+3. Delete Functionality:
+The trash bin icon enables users to remove an entry.
+Once the delete icon is clicked, a confirmation modal appears, asking the user to confirm the deletion.
+If confirmed, the row is permanently removed from the inventory.
+Services Involved
+Frontend: Angular-based framework for creating the dynamic user interface, including the table and modal components.
+Backend: Likely connected to a Node.js or Java Spring Boot service that handles API calls for data retrieval, updating, and deletion.
+Database: A database (such as MongoDB, MySQL, or similar) stores the details of the tools in the DevOps inventory.
+Version Control: GitHub is used as the version control system, as indicated by the repository links shown in the table.
+Additional Notes
+Security: Implement role-based access control (RBAC) to ensure only authorized users can add, edit, or delete entries.
+Scalability: Given that the inventory can grow, ensure the table is optimized for performance, especially when dealing with larger datasets (consider using infinite scroll or optimized pagination).
+Audit Trail: It would be beneficial to have an audit trail or logging system to track changes made to the inventory (e.g., who added/edited/deleted entries and when).
