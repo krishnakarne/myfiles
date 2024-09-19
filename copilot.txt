@@ -1,54 +1,28 @@
-DevSecOps Control Center - DevOps Inventory Page
-Overview
-The DevSecOps Control Center is a comprehensive interface designed for managing and monitoring various DevOps tools, repositories, and platforms. The DevOps Inventory page provides a streamlined view of multiple applications that are integral to the DevOps lifecycle, such as GitHub, Nexus, OpenShift, and Harbor Registry. The inventory system allows users to view, add, edit, and delete records of DevOps tools, all within a centralized dashboard.
+Overview:
+This release introduces a streamlined Login, Logout, and Profile Management feature for user authentication and session handling. Users can securely log in using Single Sign-On (SSO), view their profile information, and log out to terminate their session. This feature improves security and enhances the user experience by integrating personalized elements within the application interface.
 
-The page supports operations such as tracking dependencies, version control, orchestration platforms, and artifact storage across various environments. This functionality makes it easier for DevOps teams to manage their tools and repositories from a single platform.
+Key Features:
+Login via Single Sign-On (SSO):
 
-Key Features
-Inventory Table: The core of the page is a table that lists all the DevOps tools with relevant details:
+Users authenticate using a secure OAuth2-based SSO provider.
+Upon successful login, users are redirected to their dashboard with a personalized greeting.
+Profile Display:
 
-ID: A unique identifier for each tool.
-Application Name: The name of the tool (e.g., GitHub, Nexus, OpenShift).
-Links: URL links to the respective tools.
-Environments: Information about where the tool is deployed (e.g., On-Premise, PRO-MX1).
-Description: Brief details about the tool and its use case.
-Actions:
+The profile section displays the user's name and email, accessible through the top-right dropdown.
+Includes a Logout button for easy session termination.
+Logout Functionality:
 
-Edit Functionality: Users can click the pencil icon to edit existing entries. A confirmation modal appears, ensuring the update is intentional.
-Delete Functionality: Users can remove entries by clicking the trash bin icon, which prompts a confirmation message before deletion.
-Add New Entry: A user can add a new tool by filling out the application name, link, environment, and description fields. This feature allows for easy management and expansion of the toolset.
-Pagination: The table supports pagination, allowing users to easily navigate through large datasets. Users can choose how many rows they want to display per page (5, 10, 15, etc.).
+Clicking Logout securely clears the session and redirects the user to the login page.
+Tokens are removed to ensure proper session management and security.
+Additional Features:
+Session Management:
 
-Confirmation Modals:
+Secure storage of session tokens in localStorage/sessionStorage to maintain login states.
+Automatic redirection to login page when session expires.
+UI Enhancements:
 
-Update Confirmation: When editing an entry, a modal pops up asking if the user is sure about updating the row with a specific ID.
-Delete Confirmation: A similar modal appears during deletion, confirming whether the user wants to delete the row with the corresponding ID.
-UI Design:
-
-The interface follows a red-and-white color scheme, with a focus on simplicity and clarity.
-Buttons for actions (Add, Edit, Delete) are clearly labeled and easy to access.
-Add, Edit, Delete Functionalities
-1. Add Functionality:
-When the user clicks the "Add Row" button, a new row appears at the bottom of the table with empty fields for:
-Application Name
-URL Link
-Environment
-Description
-Once the fields are populated, clicking the confirmation checkmark button submits the new entry into the system, adding it to the inventory list.
-2. Edit Functionality:
-Clicking the pencil (edit) icon beside any row will allow the user to modify the content of that entry.
-The system will prompt a modal, asking the user for confirmation to ensure that the update is intentional.
-On confirmation, the changes will reflect in the table.
-3. Delete Functionality:
-The trash bin icon enables users to remove an entry.
-Once the delete icon is clicked, a confirmation modal appears, asking the user to confirm the deletion.
-If confirmed, the row is permanently removed from the inventory.
-Services Involved
-Frontend: Angular-based framework for creating the dynamic user interface, including the table and modal components.
-Backend: Likely connected to a Node.js or Java Spring Boot service that handles API calls for data retrieval, updating, and deletion.
-Database: A database (such as MongoDB, MySQL, or similar) stores the details of the tools in the DevOps inventory.
-Version Control: GitHub is used as the version control system, as indicated by the repository links shown in the table.
-Additional Notes
-Security: Implement role-based access control (RBAC) to ensure only authorized users can add, edit, or delete entries.
-Scalability: Given that the inventory can grow, ensure the table is optimized for performance, especially when dealing with larger datasets (consider using infinite scroll or optimized pagination).
-Audit Trail: It would be beneficial to have an audit trail or logging system to track changes made to the inventory (e.g., who added/edited/deleted entries and when).
+Custom user profile icon with personalized welcome message.
+Intuitive dropdown menu for profile and logout options.
+Services Involved:
+SSO Provider Integration: OAuth2 for authentication and secure token management.
+Backend Session Validation: Server-side session verification to enhance security.
