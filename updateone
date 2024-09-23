@@ -10,3 +10,16 @@ Short Update: Redesigned and restructured the home page layout for improved user
 Add Pagination to Tables:
 
 Short Update: Pagination has been successfully added to all tables in the UI, enabling users to navigate large datasets more easily.
+Table Integration:
+
+Short Update: Successfully integrated a dynamic table in the Angular application that displays data fetched from the backend. Features like pagination, sorting, and filtering have been implemented for an enhanced user experience, as shown in the second screenshot.
+CRUD Operations:
+
+Short Update: CRUD functionality has been implemented. Users can now add, edit, and delete data from the table with changes reflected in the backend database. Delete confirmation prompt also works correctly, as demonstrated in the fourth screenshot.
+API Integration:
+
+Short Update: Integrated with the provided API endpoints for adding, updating, and deleting data. All data changes from the frontend reflect accurately in the database, as shown in the final screenshot where the deletion is confirmed and the data is removed from the table.
+Error Handling and Validation:
+
+Short Update: Error handling and validation for CRUD operations have been implemented to ensure data integrity and provide user feedback. No API errors were encountered during these operations.
+This should provide a concise yet comprehensive update for your ticket.
