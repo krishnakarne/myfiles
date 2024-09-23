@@ -1,78 +1,12 @@
-export class DevopsInventoryComponent implements OnInit {
-  editingRowId: number | null = null; // Keeps track of which row is being edited
-  branchSource: any[] = []; // This holds the data displayed in the table
-  originalData: any; // Backup for the original data
-  @ViewChild(MatPaginator) batchPaginator: MatPaginator;
-  
-  displayedColumns: string[] = ['id', 'name', 'url', 'location', 'description', 'actions'];
+Update Sidenav:
 
-  ngOnInit(): void {
-    this.loadTableData();
-  }
+Short Update: Added a new section named "DevOps" with sub-children "DevOps Repositories" and "Draw.io". Also, added the new "Gluon Intake Process" section. The sidenav is now fully updated with all new sections and sub-children.
+Implement Draw.io:
 
-  // Function to load the data from the service
-  loadTableData(): void {
-    this.service.getDevopsInventoryUrl().subscribe((res: any) => {
-      this.originalData = res;
-      this.branchSource = new MatTableDataSource<any>(this.originalData);
-      this.branchSource.paginator = this.batchPaginator; // Set the paginator
-    });
-  }
+Short Update: Successfully integrated Draw.io in the "Draw.io" sub-child of the "DevOps" section. The functionality is now accessible and operational.
+Change Home Page Structure:
 
-  // Function to toggle editing mode for the specific row
-  toggleEdit(element: any): void {
-    if (this.editingRowId === element.id) {
-      if (this.isFormValid(element)) {
-        this.updateRow(element); // Call the update function
-        this.editingRowId = null; // Exit editing mode after saving
-      }
-    } else {
-      this.editingRowId = element.id; // Set the row to be edited
-    }
-  }
+Short Update: Redesigned and restructured the home page layout for improved user experience and navigation. The new layout is more user-friendly and visually appealing.
+Add Pagination to Tables:
 
-  // Function to validate form fields
-  isFormValid(element: any): boolean {
-    return element.name?.trim() !== '' && element.url?.trim() !== '';
-  }
-
-  // Function to call PUT API and update the data
-  updateRow(element: any): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to SUBMIT the changes?'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'YES') {
-        this.service.updateDevopsInventoryUrl(element).subscribe(() => {
-          this.loadTableData(); // Reload table data after update
-        });
-      }
-    });
-  }
-
-  // Function to add a new row to the table
-  addRow(): void {
-    const newRow = { id: 0, name: '', description: '', location: '', url: '', isEditing: true };
-    this.branchSource.data = [...this.branchSource.data, newRow];
-    setTimeout(() => {
-      this.batchPaginator.pageIndex = Math.floor(this.branchSource.data.length / this.batchPaginator.pageSize);
-      this.branchSource.paginator = this.batchPaginator;
-    });
-  }
-
-  // Function to delete a row from the table
-  deleteRow(element: any): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: 'Are you sure you want to delete the row?'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'YES') {
-        this.service.deleteDevopsInventoryUrl(element.id).subscribe(() => {
-          this.loadTableData(); // Reload the table after deleting the row
-        });
-      }
-    });
-  }
-}
+Short Update: Pagination has been successfully added to all tables in the UI, enabling users to navigate large datasets more easily.
