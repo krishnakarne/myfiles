@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Krishna Karne | Senior Frontend Engineer</title>
+    <meta
+      name="description"
+      content="Portfolio of Krishna Karne, Senior Frontend Engineer specializing in React, TypeScript, Angular, Micro Frontends, UI architecture, and CI/CD-driven product engineering."
+    />
+    <style>
+      :root {
+        --bg: #060b16;
+        --panel: rgba(10, 18, 36, 0.78);
+        --panel-2: rgba(13, 23, 47, 0.9);
+        --line: rgba(86, 214, 255, 0.28);
+        --cyan: #69f3ff;
+        --cyan-2: #00d4ff;
+        --purple: #8a7dff;
+        --text: #eef6ff;
+        --muted: #9fb6d4;
+        --good: #6bffbf;
+        --gold: #ffd978;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.38);
+        --radius: 24px;
+        --nav-width: 110px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.18), transparent 24%),
+          radial-gradient(circle at 80% 12%, rgba(138, 125, 255, 0.18), transparent 20%),
+          radial-gradient(circle at 75% 80%, rgba(0, 212, 255, 0.1), transparent 18%),
+          linear-gradient(160deg, #030712, #08101f 45%, #0b1325 100%);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(circle at center, rgba(0,0,0,1), rgba(0,0,0,0.15));
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: var(--nav-width) 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: var(--nav-width);
+        background: linear-gradient(180deg, rgba(4, 10, 21, 0.95), rgba(5, 10, 18, 0.84));
+        border-right: 1px solid rgba(105, 243, 255, 0.18);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 14px;
+        z-index: 20;
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--cyan);
+        border: 1px solid rgba(105, 243, 255, 0.45);
+        background: linear-gradient(180deg, rgba(10, 22, 44, 0.95), rgba(7, 14, 30, 0.88));
+        box-shadow: inset 0 0 30px rgba(105, 243, 255, 0.08), 0 0 28px rgba(0, 212, 255, 0.12);
+      }
+
+      .nav {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 8px;
+        border-radius: 18px;
+        border: 1px solid transparent;
+        transition: 180ms ease;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .nav a:hover,
+      .nav a.active {
+        color: var(--cyan);
+        border-color: rgba(105, 243, 255, 0.35);
+        background: rgba(12, 24, 46, 0.75);
+        box-shadow: inset 0 0 0 1px rgba(105, 243, 255, 0.12), 0 0 18px rgba(0, 212, 255, 0.12);
+      }
+
+      .nav .icon { font-size: 20px; }
+
+      .status-orb {
+        margin-top: auto;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: radial-gradient(circle, var(--good), rgba(107,255,191,0.15));
+        box-shadow: 0 0 18px rgba(107,255,191,0.6);
+      }
+
+      .content { grid-column: 2; padding: 34px 34px 60px; }
+      .page { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px; }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(8, 16, 32, 0.92), rgba(10, 18, 36, 0.75));
+        border: 1px solid rgba(105, 243, 255, 0.16);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(105,243,255,0.08), transparent 28%, transparent 70%, rgba(138,125,255,0.08));
+        pointer-events: none;
+      }
+
+      .section-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border: 1px solid rgba(105, 243, 255, 0.24);
+        border-radius: 999px;
+        color: var(--cyan);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        background: rgba(12, 22, 44, 0.72);
+      }
+
+      .hero {
+        padding: 34px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 28px;
+        min-height: 540px;
+      }
+
+      .eyebrow { color: var(--muted); font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; margin: 22px 0 10px; }
+      h1 { margin: 0; font-size: clamp(2.6rem, 6vw, 5rem); line-height: 0.94; letter-spacing: -0.04em; }
+      .headline-accent { display: block; color: var(--cyan); text-shadow: 0 0 20px rgba(105, 243, 255, 0.18); }
+      .lead { font-size: 1.06rem; line-height: 1.8; color: var(--muted); max-width: 720px; margin: 18px 0 0; }
+      .hero-actions { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 14px; }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: var(--text);
+        border: 1px solid rgba(105, 243, 255, 0.22);
+        background: rgba(8, 18, 38, 0.82);
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      }
+
+      .btn:hover { transform: translateY(-2px); border-color: rgba(105, 243, 255, 0.5); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28), 0 0 24px rgba(0, 212, 255, 0.12); }
+      .btn-primary { background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(138, 125, 255, 0.16)); }
+
+      .hero-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+      .metric { background: var(--panel); border: 1px solid rgba(105, 243, 255, 0.14); border-radius: 18px; padding: 18px; }
+      .metric-value { font-size: 1.65rem; font-weight: 700; margin-top: 10px; }
+      .metric-label { color: var(--muted); font-size: 0.92rem; }
+
+      .radar { display: grid; grid-template-rows: auto 1fr auto; gap: 18px; padding: 24px; }
+      .hud-circle {
+        width: min(100%, 320px);
+        aspect-ratio: 1;
+        margin: 8px auto 0;
+        border-radius: 50%;
+        border: 1px solid rgba(105, 243, 255, 0.3);
+        position: relative;
+        background:
+          radial-gradient(circle at center, rgba(0, 212, 255, 0.12), transparent 22%),
+          radial-gradient(circle at center, transparent 30%, rgba(105,243,255,0.08) 30%, transparent 31%),
+          radial-gradient(circle at center, transparent 48%, rgba(105,243,255,0.08) 48%, transparent 49%),
+          radial-gradient(circle at center, transparent 66%, rgba(138,125,255,0.08) 66%, transparent 67%);
+        box-shadow: inset 0 0 38px rgba(0, 212, 255, 0.08);
+      }
+      .hud-circle::before, .hud-circle::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; border: 1px solid rgba(105, 243, 255, 0.18); }
+      .sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 300deg, transparent 0 75%, rgba(105,243,255,0.26) 80%, transparent 88%); animation: rotate 8s linear infinite; }
+      .center-core { position: absolute; inset: 40%; border-radius: 50%; background: radial-gradient(circle, rgba(105,243,255,0.9), rgba(105,243,255,0.16)); box-shadow: 0 0 34px rgba(105,243,255,0.45); }
+      @keyframes rotate { to { transform: rotate(360deg); } }
+
+      .status-card { display: grid; gap: 10px; background: var(--panel); border: 1px solid rgba(105,243,255,0.14); border-radius: 18px; padding: 16px; }
+      .status-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 0.94rem; }
+      .status-pill { color: var(--good); }
+
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+      .section { padding: 28px; }
+      .section h2 { margin: 16px 0 10px; font-size: clamp(1.6rem, 3vw, 2.4rem); }
+      .section p { color: var(--muted); line-height: 1.8; }
+      .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+      .chip { padding: 10px 14px; border-radius: 999px; background: rgba(11, 22, 44, 0.76); border: 1px solid rgba(105, 243, 255, 0.22); color: var(--text); font-size: 0.95rem; }
+
+      .cards { display: grid; gap: 16px; margin-top: 18px; }
+      .card { padding: 18px; border-radius: 20px; background: rgba(9, 18, 34, 0.72); border: 1px solid rgba(105,243,255,0.14); }
+      .card h3 { margin: 0 0 8px; font-size: 1.08rem; }
+      .card small { color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; }
+      .card p { margin: 8px 0 0; }
+
+      .timeline { display: grid; gap: 18px; position: relative; margin-top: 24px; }
+      .timeline::before { content: ""; position: absolute; left: 15px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(180deg, rgba(105,243,255,0.4), rgba(138,125,255,0.22)); }
+      .timeline-item { position: relative; padding-left: 44px; }
+      .timeline-item::before { content: ""; position: absolute; left: 8px; top: 10px; width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle, var(--cyan), rgba(105,243,255,0.2)); box-shadow: 0 0 18px rgba(105,243,255,0.45); }
+      .timeline-panel { padding: 18px; border-radius: 20px; background: rgba(9, 18, 34, 0.78); border: 1px solid rgba(105,243,255,0.14); }
+      .timeline-panel h3 { margin: 0; font-size: 1.18rem; }
+      .timeline-meta { color: var(--gold); font-size: 0.88rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 8px; }
+      .timeline-panel p { margin: 12px 0 0; }
+
+      .contact-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; margin-top: 18px; }
+      .contact-card { padding: 22px; border-radius: 20px; background: rgba(10, 20, 38, 0.78); border: 1px solid rgba(105,243,255,0.16); }
+      .contact-card a { color: var(--cyan); text-decoration: none; }
+      .contact-card a:hover { text-decoration: underline; }
+      .list { display: grid; gap: 12px; }
+      .list-item { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(105,243,255,0.08); color: var(--muted); }
+      .footer { padding: 18px 6px 8px; color: var(--muted); text-align: center; font-size: 0.92rem; }
+
+      @media (max-width: 1100px) { .hero, .grid-2, .contact-grid { grid-template-columns: 1fr; } }
+      @media (max-width: 760px) {
+        :root { --nav-width: 0px; }
+        .shell { grid-template-columns: 1fr; }
+        .sidebar { width: calc(100% - 24px); height: 78px; left: 12px; right: 12px; top: 12px; bottom: auto; flex-direction: row; justify-content: space-between; border: 1px solid rgba(105,243,255,0.18); border-radius: 22px; padding: 10px 12px; }
+        .nav { margin: 0; flex-direction: row; justify-content: center; gap: 8px; width: auto; }
+        .nav a { padding: 10px; }
+        .nav span:last-child { display: none; }
+        .status-orb { margin: 0; }
+        .content { grid-column: auto; padding: 102px 14px 40px; }
+        .hero, .section { padding: 22px; }
+      }
+      @media (max-width: 520px) {
+        .hero-grid { grid-template-columns: 1fr; }
+        h1 { font-size: 2.4rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">KK</div>
+        <nav class="nav">
+          <a href="#home" class="active"><span class="icon">⌂</span><span>Home</span></a>
+          <a href="#about"><span class="icon">◈</span><span>About</span></a>
+          <a href="#experience"><span class="icon">▣</span><span>Career</span></a>
+          <a href="#contact"><span class="icon">✦</span><span>Contact</span></a>
+        </nav>
+        <div class="status-orb" title="System ready"></div>
+      </aside>
+
+      <main class="content">
+        <div class="page">
+          <section id="home" class="panel hero">
+            <div>
+              <span class="section-tag">Orbit / Profile Console</span>
+              <div class="eyebrow">Senior Frontend Engineer</div>
+              <h1>
+                Krishna Karne
+                <span class="headline-accent">Building elegant UI systems for complex platforms.</span>
+              </h1>
+              <p class="lead">
+                Frontend-focused engineer with 10+ years of experience across React, TypeScript, Angular, Node.js, UI/UX delivery,
+                and CI/CD-enabled product engineering. I build scalable interfaces, developer-facing platforms, and polished user
+                experiences that are fast, accessible, and production-ready.
+              </p>
+
+              <div class="hero-actions">
+                <a class="btn btn-primary" href="#experience">View Experience</a>
+                <a class="btn" href="#contact">Resume Available on Request</a>
+                <a class="btn" href="#contact">Contact Me</a>
+              </div>
+
+              <div class="hero-grid">
+                <div class="metric"><div class="metric-label">Experience</div><div class="metric-value">10+ Years</div></div>
+                <div class="metric"><div class="metric-label">Core Stack</div><div class="metric-value">React · TS · Node</div></div>
+                <div class="metric"><div class="metric-label">Focus Areas</div><div class="metric-value">MFE · CI/CD · UX</div></div>
+                <div class="metric"><div class="metric-label">Current Role</div><div class="metric-value">Senior UI Engineer</div></div>
+              </div>
+            </div>
+
+            <div class="radar">
+              <span class="section-tag">Control Surface</span>
+              <div class="hud-circle">
+                <div class="sweep"></div>
+                <div class="center-core"></div>
+              </div>
+              <div class="status-card">
+                <div class="status-row"><span>UI Systems</span><strong>Optimal</strong></div>
+                <div class="status-row"><span>Micro Frontends</span><strong>Active</strong></div>
+                <div class="status-row"><span>Accessibility</span><strong class="status-pill">Verified</strong></div>
+                <div class="status-row"><span>Deployment Mode</span><strong>Production Ready</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <div class="grid-2">
+            <section id="about" class="panel section">
+              <span class="section-tag">About Me</span>
+              <h2>Modern frontend engineering with design awareness.</h2>
+              <p>
+                I specialize in building high-quality interfaces that connect cleanly with backend systems and scale in enterprise environments.
+                My work spans reusable UI components, routing, state management, performance optimization, accessibility, testing, and deployment workflows.
+              </p>
+              <p>
+                I’ve worked across internal developer platforms, banking platforms, lending applications, and global SaaS products, helping teams move from ideas and wireframes to real, production-ready experiences.
+              </p>
+              <div class="chips">
+                <span class="chip">React</span>
+                <span class="chip">TypeScript</span>
+                <span class="chip">Angular</span>
+                <span class="chip">Node.js</span>
+                <span class="chip">Redux Toolkit</span>
+                <span class="chip">Micro Frontends</span>
+                <span class="chip">CI/CD</span>
+                <span class="chip">Accessibility</span>
+                <span class="chip">Azure</span>
+                <span class="chip">AWS</span>
+              </div>
+            </section>
+
+            <section class="panel section">
+              <span class="section-tag">Core Highlights</span>
+              <h2>What I bring to teams.</h2>
+              <div class="cards">
+                <article class="card">
+                  <small>Scalable UI</small>
+                  <h3>Reusable component-driven architecture</h3>
+                  <p>I build maintainable systems with reusable components, clean code structure, and production-focused UX.</p>
+                </article>
+                <article class="card">
+                  <small>Performance</small>
+                  <h3>Optimization and quality mindset</h3>
+                  <p>From lazy loading to test coverage and accessibility, I focus on fast, resilient, user-friendly interfaces.</p>
+                </article>
+                <article class="card">
+                  <small>Delivery</small>
+                  <h3>Strong integration with CI/CD workflows</h3>
+                  <p>Comfortable working with pipelines, version control, deployment flows, and cross-functional engineering teams.</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <section id="experience" class="panel section">
+            <span class="section-tag">Career Timeline</span>
+            <h2>Selected experience.</h2>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-panel">
+                  <h3>Capital One · Senior UI Engineer</h3>
+                  <div class="timeline-meta">Oct 2024 – Present · React · TypeScript · Node.js · AWS</div>
+                  <p>Working on an internal developer platform focused on CI/CD automation, release management, React applications, Micro Frontends with Vite, and quality workflows including testing, accessibility, and deployment readiness.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-panel">
+                  <h3>Santander Bank · Lead UI Application Developer</h3>
+                  <div class="timeline-meta">Oct 2023 – Oct 2024 · React · TypeScript · OpenShift</div>
+                  <p>Helped build a unified API lifecycle portal, delivering scalable frontend architecture, modular React patterns, performance improvements, and accessibility-first implementation.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-panel">
+                  <h3>Wells Fargo · Lead UI Application Developer</h3>
+                  <div class="timeline-meta">Mar 2023 – Oct 2023 · React · Node.js · Azure</div>
+                  <p>Built commercial lending platform experiences using React, Hooks, Redux patterns, API integration, responsive design, and collaboration with backend teams for dependable user experiences.</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-panel">
+                  <h3>MetLife · Application Developer / Lead Frontend</h3>
+                  <div class="timeline-meta">Sep 2015 – Jan 2023 · React · Node.js · OpenShift</div>
+                  <p>Contributed across SaaS platform engineering, responsive UI delivery, SSR, backend integration, security and compliance work, technical leadership, and production maintenance.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="contact" class="panel section">
+            <span class="section-tag">Contact Console</span>
+            <h2>Let’s build something thoughtful.</h2>
+            <div class="contact-grid">
+              <div class="contact-card">
+                <p>I’m open to conversations around senior frontend engineering, UI architecture, React platforms, micro frontends, and modern product engineering.</p>
+                <div class="list">
+                  <div class="list-item"><span>Email</span><strong><a href="mailto:karnekrishna6@gmail.com">karnekrishna6@gmail.com</a></strong></div>
+                  <div class="list-item"><span>Phone</span><strong><a href="tel:+16183053322">+1 618-305-3322</a></strong></div>
+                  <div class="list-item"><span>LinkedIn</span><strong><a href="https://www.linkedin.com/in/sai-krishna-chaitanya-karne-371326141/" target="_blank" rel="noreferrer">View Profile</a></strong></div>
+                </div>
+              </div>
+              <div class="contact-card">
+                <h3 style="margin-top:0">Site Navigation</h3>
+                <p>Use the sidebar to move through the profile quickly, or jump straight to the section you need.</p>
+                <div class="hero-actions" style="margin-top:18px">
+                  <a class="btn btn-primary" href="#home">Back to Home</a>
+                  <a class="btn" href="#about">About Me</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="footer">Designed as a futuristic control-panel portfolio for Krishna Karne.</div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const sections = [...document.querySelectorAll('section[id]')];
+      const navLinks = [...document.querySelectorAll('.nav a')];
+      const linkMap = new Map(navLinks.map(link => [link.getAttribute('href').slice(1), link]));
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            navLinks.forEach((link) => link.classList.remove('active'));
+            const current = linkMap.get(entry.target.id);
+            if (current) current.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-35% 0px -45% 0px', threshold: 0.1 });
+      sections.forEach((section) => observer.observe(section));
+    </script>
+  </body>
+</html>
