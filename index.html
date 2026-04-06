@@ -201,28 +201,196 @@
       .metric-label { color: var(--muted); font-size: 0.92rem; }
 
       .radar { display: grid; grid-template-rows: auto 1fr auto; gap: 18px; padding: 24px; }
-      .hud-circle {
-        width: min(100%, 320px);
+      .radar-display {
+        position: relative;
+        width: min(100%, 340px);
         aspect-ratio: 1;
         margin: 8px auto 0;
+      }
+
+      .hud-circle {
+        position: absolute;
+        inset: 0;
         border-radius: 50%;
         border: 1px solid rgba(105, 243, 255, 0.3);
-        position: relative;
         background:
-          radial-gradient(circle at center, rgba(0, 212, 255, 0.12), transparent 22%),
-          radial-gradient(circle at center, transparent 30%, rgba(105,243,255,0.08) 30%, transparent 31%),
-          radial-gradient(circle at center, transparent 48%, rgba(105,243,255,0.08) 48%, transparent 49%),
-          radial-gradient(circle at center, transparent 66%, rgba(138,125,255,0.08) 66%, transparent 67%);
-        box-shadow: inset 0 0 38px rgba(0, 212, 255, 0.08);
+          radial-gradient(circle at center, rgba(0, 212, 255, 0.12), transparent 20%),
+          radial-gradient(circle at center, transparent 20%, rgba(105,243,255,0.05) 20%, transparent 21%),
+          radial-gradient(circle at center, transparent 36%, rgba(105,243,255,0.08) 36%, transparent 37%),
+          radial-gradient(circle at center, transparent 52%, rgba(105,243,255,0.08) 52%, transparent 53%),
+          radial-gradient(circle at center, transparent 68%, rgba(138,125,255,0.08) 68%, transparent 69%),
+          linear-gradient(180deg, rgba(5, 14, 28, 0.9), rgba(8, 20, 42, 0.72));
+        box-shadow: inset 0 0 38px rgba(0, 212, 255, 0.08), 0 0 30px rgba(0, 212, 255, 0.08);
+        overflow: hidden;
       }
-      .hud-circle::before, .hud-circle::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; border: 1px solid rgba(105, 243, 255, 0.18); }
-      .sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 300deg, transparent 0 75%, rgba(105,243,255,0.26) 80%, transparent 88%); animation: rotate 8s linear infinite; }
-      .center-core { position: absolute; inset: 40%; border-radius: 50%; background: radial-gradient(circle, rgba(105,243,255,0.9), rgba(105,243,255,0.16)); box-shadow: 0 0 34px rgba(105,243,255,0.45); }
-      @keyframes rotate { to { transform: rotate(360deg); } }
 
-      .status-card { display: grid; gap: 10px; background: var(--panel); border: 1px solid rgba(105,243,255,0.14); border-radius: 18px; padding: 16px; }
-      .status-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 0.94rem; }
-      .status-pill { color: var(--good); }
+      .hud-circle::before,
+      .hud-circle::after {
+        content: "";
+        position: absolute;
+        inset: 12%;
+        border-radius: 50%;
+        border: 1px solid rgba(105, 243, 255, 0.18);
+      }
+
+      .hud-circle::after {
+        inset: 28%;
+        border-color: rgba(105, 243, 255, 0.1);
+      }
+
+      .radar-grid-line {
+        position: absolute;
+        background: rgba(105, 243, 255, 0.12);
+      }
+
+      .radar-grid-line.horizontal {
+        left: 8%;
+        right: 8%;
+        top: 50%;
+        height: 1px;
+        transform: translateY(-50%);
+      }
+
+      .radar-grid-line.vertical {
+        top: 8%;
+        bottom: 8%;
+        left: 50%;
+        width: 1px;
+        transform: translateX(-50%);
+      }
+
+      .sweep {
+        position: absolute;
+        inset: -6%;
+        border-radius: 50%;
+        background: conic-gradient(from 315deg, transparent 0 76%, rgba(105,243,255,0.24) 82%, rgba(105,243,255,0.02) 88%, transparent 92%);
+        animation: rotate 7s linear infinite;
+        filter: blur(1px);
+      }
+
+      .center-core {
+        position: absolute;
+        inset: 42%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(105,243,255,0.9), rgba(105,243,255,0.18));
+        box-shadow: 0 0 34px rgba(105,243,255,0.45);
+      }
+
+      .radar-blip {
+        --x: 50%;
+        --y: 50%;
+        --delay: 0s;
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        transform: translate(-50%, -50%);
+        z-index: 2;
+      }
+
+      .radar-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(107,255,191,1), rgba(107,255,191,0.25));
+        box-shadow: 0 0 12px rgba(107,255,191,0.95), 0 0 24px rgba(105,243,255,0.3);
+        animation: radarBlink 1.7s ease-in-out infinite;
+        animation-delay: var(--delay);
+      }
+
+      .radar-dot::after {
+        content: "";
+        position: absolute;
+        inset: -9px;
+        border-radius: 50%;
+        border: 1px solid rgba(107,255,191,0.28);
+        animation: radarPulse 2.8s ease-out infinite;
+        animation-delay: var(--delay);
+      }
+
+      .radar-label {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: rgba(7, 18, 34, 0.88);
+        border: 1px solid rgba(105,243,255,0.18);
+        color: var(--text);
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: nowrap;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+      }
+
+      .radar-label small {
+        display: block;
+        color: var(--cyan);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 9px;
+        margin-bottom: 2px;
+      }
+
+      .detected-panel {
+        display: grid;
+        gap: 10px;
+        background: var(--panel);
+        border: 1px solid rgba(105,243,255,0.14);
+        border-radius: 18px;
+        padding: 16px;
+      }
+
+      .detected-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+      }
+
+      .detected-count {
+        color: var(--good);
+        font-weight: 700;
+      }
+
+      .detected-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .detected-code {
+        min-width: 56px;
+        text-align: center;
+        border-radius: 999px;
+        padding: 5px 8px;
+        border: 1px solid rgba(105,243,255,0.18);
+        color: var(--cyan);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(10, 20, 38, 0.82);
+      }
+
+      .detected-status {
+        color: var(--good);
+        font-weight: 700;
+      }
+
+      @keyframes rotate { to { transform: rotate(360deg); } }
+      @keyframes radarBlink {
+        0%, 100% { opacity: 0.45; transform: scale(0.9); }
+        35% { opacity: 1; transform: scale(1.15); }
+        55% { opacity: 0.72; transform: scale(1); }
+      }
+      @keyframes radarPulse {
+        0% { transform: scale(0.55); opacity: 0.8; }
+        100% { transform: scale(1.8); opacity: 0; }
+      }
 
       .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
       .section { padding: 28px; }
@@ -265,6 +433,9 @@
         .status-orb { margin: 0; }
         .content { grid-column: auto; padding: 102px 14px 40px; }
         .hero, .section { padding: 22px; }
+        .radar-label { font-size: 10px; white-space: normal; max-width: 96px; }
+        .detected-row { grid-template-columns: auto 1fr; }
+        .detected-status { grid-column: 2; }
       }
       @media (max-width: 520px) {
         .hero-grid { grid-template-columns: 1fr; }
@@ -317,15 +488,56 @@
 
             <div class="radar">
               <span class="section-tag">Control Surface</span>
-              <div class="hud-circle">
-                <div class="sweep"></div>
-                <div class="center-core"></div>
+              <div class="radar-display">
+                <div class="hud-circle">
+                  <div class="radar-grid-line horizontal"></div>
+                  <div class="radar-grid-line vertical"></div>
+                  <div class="sweep"></div>
+                  <div class="center-core"></div>
+
+                  <div class="radar-blip" style="--x: 66%; --y: 31%; --delay: 0.15s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 01</small>Senior Frontend Engineer</div>
+                  </div>
+
+                  <div class="radar-blip" style="--x: 76%; --y: 57%; --delay: 0.55s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 02</small>Senior Full Stack Engineer</div>
+                  </div>
+
+                  <div class="radar-blip" style="--x: 52%; --y: 70%; --delay: 0.95s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 03</small>Senior Engineer · .NET/React</div>
+                  </div>
+
+                  <div class="radar-blip" style="--x: 33%; --y: 61%; --delay: 0.35s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 04</small>Micro Frontend Engineer</div>
+                  </div>
+
+                  <div class="radar-blip" style="--x: 28%; --y: 40%; --delay: 1.2s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 05</small>UI Platform Engineer</div>
+                  </div>
+
+                  <div class="radar-blip" style="--x: 47%; --y: 22%; --delay: 0.8s;">
+                    <div class="radar-dot"></div>
+                    <div class="radar-label"><small>Target 06</small>Java / React Product Engineer</div>
+                  </div>
+                </div>
               </div>
-              <div class="status-card">
-                <div class="status-row"><span>UI Systems</span><strong>Optimal</strong></div>
-                <div class="status-row"><span>Platform Engineering</span><strong>Active</strong></div>
-                <div class="status-row"><span>Accessibility</span><strong class="status-pill">Verified</strong></div>
-                <div class="status-row"><span>Deployment Mode</span><strong>Production Ready</strong></div>
+
+              <div class="detected-panel">
+                <div class="detected-header">
+                  <span>Detected role matches</span>
+                  <span class="detected-count">6 identified</span>
+                </div>
+                <div class="detected-row"><span class="detected-code">T-01</span><span>Senior Frontend Engineer</span><span class="detected-status">Match</span></div>
+                <div class="detected-row"><span class="detected-code">T-02</span><span>Senior Full Stack Engineer</span><span class="detected-status">Match</span></div>
+                <div class="detected-row"><span class="detected-code">T-03</span><span>Senior Engineer · .NET / React</span><span class="detected-status">Match</span></div>
+                <div class="detected-row"><span class="detected-code">T-04</span><span>Micro Frontend Engineer</span><span class="detected-status">Match</span></div>
+                <div class="detected-row"><span class="detected-code">T-05</span><span>UI Platform Engineer</span><span class="detected-status">Match</span></div>
+                <div class="detected-row"><span class="detected-code">T-06</span><span>Java / React Product Engineer</span><span class="detected-status">Match</span></div>
               </div>
             </div>
           </section>
