@@ -1,0 +1,4 @@
+Krishna Karne portfolio site.
+Production domain: karnekrishna.com
+Redirect domain: karnekrishna6.com
+Deploy on Vercel.

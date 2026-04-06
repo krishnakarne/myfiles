@@ -12,10 +12,7 @@
       :root {
         --bg: #060b16;
         --panel: rgba(10, 18, 36, 0.78);
-        --panel-2: rgba(13, 23, 47, 0.9);
-        --line: rgba(86, 214, 255, 0.28);
         --cyan: #69f3ff;
-        --cyan-2: #00d4ff;
         --purple: #8a7dff;
         --text: #eef6ff;
         --muted: #9fb6d4;
@@ -120,7 +117,6 @@
       }
 
       .nav .icon { font-size: 20px; }
-
       .status-orb {
         margin-top: auto;
         width: 18px;
@@ -191,7 +187,12 @@
         transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
       }
 
-      .btn:hover { transform: translateY(-2px); border-color: rgba(105, 243, 255, 0.5); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28), 0 0 24px rgba(0, 212, 255, 0.12); }
+      .btn:hover {
+        transform: translateY(-2px);
+        border-color: rgba(105, 243, 255, 0.5);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28), 0 0 24px rgba(0, 212, 255, 0.12);
+      }
+
       .btn-primary { background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(138, 125, 255, 0.16)); }
 
       .hero-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
@@ -302,7 +303,7 @@
 
               <div class="hero-actions">
                 <a class="btn btn-primary" href="#experience">View Experience</a>
-                <a class="btn" href="#contact">Resume Available on Request</a>
+                <a class="btn" href="./Sai_Krishna_Karne_Resume.pdf" download>Download Resume (PDF)</a>
                 <a class="btn" href="#contact">Contact Me</a>
               </div>
 
