@@ -678,5 +678,30 @@
       }, { rootMargin: '-35% 0px -45% 0px', threshold: 0.1 });
       sections.forEach((section) => observer.observe(section));
     </script>
+    <script>
+      (function () {
+        function trackVisit() {
+          try {
+            fetch('/api/track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                path: window.location.pathname,
+                referrer: document.referrer || '',
+              }),
+              keepalive: true,
+            }).catch(function () {});
+          } catch (error) {
+            console.warn('Analytics tracking skipped:', error);
+          }
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', trackVisit, { once: true });
+        } else {
+          trackVisit();
+        }
+      })();
+    </script>
   </body>
 </html>
